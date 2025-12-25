@@ -7,159 +7,241 @@
   <meta name="description" content="Typical peephole installation pricing, what affects cost, DIY vs pro, and what’s included — for Charlotte, NC." />
   <link rel="canonical" href="/charlotte-nc/" />
   <style>
-    :root {
-      --bg: #0b1b33;
-      --bg2: #102a4d;
-      --text: #0f172a;
-      --muted: #475569;
-      --card: #ffffff;
-      --line: #e2e8f0;
-      --cta: #f97316;
-      --cta-hover: #ea580c;
-      --max: 980px;
-      --radius: 14px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color: var(--text);
-      background: #f8fafc;
-      line-height: 1.55;
-    }
-    header {
-      background: linear-gradient(135deg, var(--bg), var(--bg2));
-      color: white;
-      padding: 44px 18px 34px;
-    }
-    .wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-    }
-    .hero {
-      display: grid;
-      gap: 14px;
-      justify-items: center;
-      text-align: center;
-    }
-    .hero h1 {
-      margin: 0;
-      font-size: 26px;
-      letter-spacing: -0.01em;
-    }
-    .sub {
-      margin: 0;
-      color: rgba(255,255,255,0.86);
-      max-width: 68ch;
-      font-size: 14px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 14px;
-      background: var(--cta);
-      color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 13px;
-    }
-    .btn:hover { background: var(--cta-hover); }
-    main {
-      padding: 24px 18px 42px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
-    }
-    .grid {
-      display: grid;
-      gap: 16px;
-    }
-    .img {
-      overflow: hidden;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .img img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    h2 {
-      font-size: 16px;
-      margin: 18px 0 8px;
-      letter-spacing: -0.01em;
-    }
-    p { margin: 0 0 10px; color: var(--text); }
-    ul { margin: 10px 0 14px 18px; color: var(--text); }
-    li { margin: 6px 0; }
-    hr {
-      border: none;
-      border-top: 1px solid var(--line);
-      margin: 18px 0;
-    }
-    .muted { color: var(--muted); font-size: 13px; }
-    footer {
-      background: linear-gradient(135deg, var(--bg), var(--bg2));
-      color: rgba(255,255,255,0.9);
-      padding: 34px 18px;
-    }
-    .footer-card {
-      max-width: var(--max);
-      margin: 0 auto;
-      text-align: center;
-    }
-    .footer-card h2 {
-      color: white;
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-    .footer-card p { color: rgba(255,255,255,0.85); }
-    .footer-card a { margin-top: 10px; }
-    .small {
-      margin-top: 18px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-    }
-    .links a {
-      color: rgba(255,255,255,0.9);
-      text-decoration: underline;
-      margin: 0 10px;
-      font-size: 13px;
-    }
-    .pill {
-      display: inline-block;
-      padding: 4px 10px;
-      background: #eef2ff;
-      border: 1px solid #e0e7ff;
-      color: #1e3a8a;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .table th, .table td {
-      text-align: left;
-      padding: 10px 10px;
-      border-top: 1px solid var(--line);
-      vertical-align: top;
-    }
-    .table th {
-      color: #0f172a;
-      background: #f1f5f9;
-      border-top: 1px solid var(--line);
-    }
+:root {
+  --bg: #0b1b33;
+  --bg2: #102a4d;
+  --text: #0f172a;
+  --muted: #475569;
+  --card: #ffffff;
+  --line: #e2e8f0;
+  --cta: #f97316;
+  --cta-hover: #ea580c;
+  --max: 980px;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color: var(--text);
+  background: #f8fafc;
+  line-height: 1.55;
+  padding-top: 58px; /* room for fixed toolbar */
+}
+
+/* Fixed top toolbar (all pages) */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  background: rgba(255,255,255,0.98);
+  border-bottom: 1px solid var(--line);
+  z-index: 999;
+  backdrop-filter: blur(8px);
+}
+
+.topbar-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 800;
+  text-decoration: none;
+  color: #0b1b33;
+  letter-spacing: -0.01em;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.toplink {
+  text-decoration: none;
+  color: #0f172a;
+  font-size: 13px;
+}
+
+header {
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  color: white;
+  padding: 44px 18px 34px;
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; }
+
+.hero {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  margin: 0;
+  color: rgba(255,255,255,0.86);
+  max-width: 68ch;
+  font-size: 14px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
+  background: var(--cta);
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 13px;
+  border: 0;
+}
+
+.btn:hover { background: var(--cta-hover); }
+
+.btn-top { padding: 9px 12px; }
+
+main { padding: 24px 18px 42px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
+}
+
+.grid { display: grid; gap: 16px; }
+
+.img {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.img img { display: block; width: 100%; height: auto; }
+
+h2 {
+  font-size: 16px;
+  margin: 18px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+p { margin: 0 0 10px; color: var(--text); }
+ul { margin: 10px 0 14px 18px; color: var(--text); }
+li { margin: 6px 0; }
+
+hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+.muted { color: var(--muted); font-size: 13px; }
+
+footer {
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  color: rgba(255,255,255,0.9);
+  padding: 34px 18px;
+}
+
+.footer-card { max-width: var(--max); margin: 0 auto; text-align: center; }
+
+.footer-card h2 { color: white; margin: 0 0 10px; font-size: 18px; }
+
+.footer-card p { color: rgba(255,255,255,0.85); }
+
+.small { margin-top: 18px; font-size: 12px; color: rgba(255,255,255,0.7); }
+
+.links a {
+  color: rgba(255,255,255,0.9);
+  text-decoration: underline;
+  margin: 0 10px;
+  font-size: 13px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  color: #1e3a8a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.table th, .table td {
+  text-align: left;
+  padding: 10px 10px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.table th {
+  color: #0f172a;
+  background: #f1f5f9;
+  border-top: 1px solid var(--line);
+}
+
+/* Clean city buttons (simple, uncluttered) */
+.city-grid {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.city-grid a {
+  display: block;
+  text-decoration: none;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.city-grid a:hover {
+  border-color: #cbd5e1;
+}
   </style>
 </head>
 <body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/">Peephole Installation Company</a>
+    <div class="topbar-actions">
+      <a class="toplink" href="/">Home</a>
+      <a class="btn btn-top" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="wrap hero">
@@ -167,7 +249,7 @@
     <p class="sub">
       Straightforward pricing guidance, what affects the total, and what you typically get with a professional install.
     </p>
-    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Request a Free Quote</a>
+    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
   </div>
 </header>
 
@@ -177,7 +259,7 @@
       <div class="pill">Local cost guide</div>
 
       <div class="img" style="margin-top:12px;">
-        <img src="https://source.unsplash.com/1600x900/?front,door,peephole,installation" alt="Door viewer installed in a front door" loading="lazy" />
+        <img src="/assets/door-viewer.jpg" alt="Door viewer installed in a front door" loading="lazy" />
       </div>
 
       <h2>What’s included in professional installation</h2>
@@ -222,8 +304,9 @@
 
       <h2>Cost estimate</h2>
       <p class="muted">
-        Estimated installed cost in Charlotte, NC (most projects): 
+        Estimated installed cost in Charlotte, NC (most projects):
       </p>
+
       <table class="table" aria-label="Cost estimate table">
         <thead>
           <tr>
@@ -244,10 +327,6 @@
       <p class="muted" style="margin-top:10px;">
         These are “typical” ranges—actual quotes can vary by door type, hardware choice, and job complexity.
       </p>
-
-      <p style="margin-top:14px;">
-        <a href="/articles/">More cost guides</a>
-      </p>
     </section>
   </div>
 </main>
@@ -256,16 +335,14 @@
   <div class="footer-card">
     <h2>Ready to move forward?</h2>
     <p>Request a free quote and we’ll confirm the right door viewer and installation approach.</p>
-    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Request a Free Quote</a>
+    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
     <div class="small">
       © Peephole Installation Company. All rights reserved.
       <div class="links" style="margin-top:10px;">
         <a href="/">Home</a>
-        <a href="/articles/">Cost Guides</a>
       </div>
     </div>
   </div>
 </footer>
-
 </body>
 </html>

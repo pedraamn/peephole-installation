@@ -2,36 +2,48 @@
 """
 Static site generator (no JS) for a single-service, multi-city site.
 
-Output:
-- ./dist/index.html (homepage)
-- ./dist/<city>-<state>/index.html (city pages)  e.g. /los-angeles-ca/
+Cloudflare Pages:
+- Build command: (empty)
+- Output directory: public
+
+URL structure:
+- /<city>-<state>/  e.g. /los-angeles-ca/
 
 SEO rules enforced:
-- Only one H1 per page
+- Exactly one H1 per page
 - <title> == H1
-- Title <= ~70 chars (hard-truncated if needed)
-- City+State in URL
-- Fixed, controlled H2 set
-- Cost section placed near bottom
+- Title <= 70 characters
+- Controlled H2 set (city pages only use headings from H2_HEADINGS)
+- Avoid over-repeating city name in body copy
+- Cost section near the bottom
+- Natural CTA at the bottom
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-import re
 import html
+import re
 
 
 # -----------------------
-# CONFIG (edit these)
+# CONFIG
 # -----------------------
-SERVICE_NAME = "Peephole Installation"
-BRAND_NAME = "Peephole Installation Company"
-PRIMARY_CTA_TEXT = "Request a Free Quote"
-PRIMARY_CTA_HREF = "mailto:hello@example.com?subject=Free%20Quote%20Request"
+@dataclass(frozen=True)
+class SiteConfig:
+    service_name: str = "Peephole Installation"
+    brand_name: str = "Peephole Installation Company"
+    cta_text: str = "Get Free Estimate"
+    cta_href: str = "mailto:hello@example.com?subject=Free%20Quote%20Request"
+    output_dir: Path = Path("public")
+    cost_low: int = 110
+    cost_high: int = 220
 
-# A single, controlled H2 set (so headings only come from *here*)
+
+CONFIG = SiteConfig()
+
+# Controlled H2 set (city pages ONLY pull headings from this list)
 H2_HEADINGS = [
     "What’s included in professional installation",
     "Typical materials and door types",
@@ -42,7 +54,6 @@ H2_HEADINGS = [
     "Cost estimate",
 ]
 
-# NOTE: put major cities here (you can expand to 100+ easily)
 CITIES: list[tuple[str, str]] = [
     ("Los Angeles", "CA"),
     ("New York", "NY"),
@@ -66,17 +77,19 @@ CITIES: list[tuple[str, str]] = [
     ("Washington", "DC"),
 ]
 
-# “Only number you need to generate”
-# You can set a global range, or make a per-state override later.
-DEFAULT_COST_LOW = 110
-DEFAULT_COST_HIGH = 220
-
-OUTPUT_DIR = Path("public")
+# Prefer a local image so it always works on Cloudflare Pages.
+# Put a royalty-free image at: public/assets/door-viewer.jpg
+LOCAL_IMAGE_CITY = "/assets/door-viewer.jpg"
+LOCAL_IMAGE_HOME = "/assets/front-door.jpg"
 
 
 # -----------------------
 # HELPERS
 # -----------------------
+def esc(s: str) -> str:
+    return html.escape(s, quote=True)
+
+
 def slugify(s: str) -> str:
     s = s.strip().lower()
     s = re.sub(r"&", " and ", s)
@@ -84,35 +97,265 @@ def slugify(s: str) -> str:
     s = re.sub(r"-{2,}", "-", s).strip("-")
     return s
 
+
 def city_state_slug(city: str, state: str) -> str:
     return f"{slugify(city)}-{slugify(state)}"
 
-def esc(s: str) -> str:
-    return html.escape(s, quote=True)
 
 def clamp_title(title: str, max_chars: int = 70) -> str:
-    # Hard truncate to be safe, but avoid chopping in the middle of a multi-byte char.
     if len(title) <= max_chars:
         return title
     return title[: max_chars - 1].rstrip() + "…"
 
-def make_h1_title(service: str, city: str, state: str) -> str:
-    # Try to pack keywords early: "Peephole Installation in Los Angeles, CA"
-    base = f"{service} in {city}, {state}"
-    return clamp_title(base, 70)
 
-def unsplash_image_url(query: str) -> str:
-    # Royalty-free photo source (served by Unsplash). No API key needed.
-    # This returns a random photo matching the query.
-    q = slugify(query).replace("-", ",")
-    return f"https://source.unsplash.com/1600x900/?{esc(q)}"
+def make_city_h1(service: str, city: str, state: str) -> str:
+    return clamp_title(f"{service} in {city}, {state}", 70)
+
+
+def toolbar_html() -> str:
+    return f"""
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/">{esc(CONFIG.brand_name)}</a>
+    <div class="topbar-actions">
+      <a class="toplink" href="/">Home</a>
+      <a class="btn btn-top" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
+    </div>
+  </div>
+</div>
+""".rstrip()
+
+
+CSS = """
+:root {
+  --bg: #0b1b33;
+  --bg2: #102a4d;
+  --text: #0f172a;
+  --muted: #475569;
+  --card: #ffffff;
+  --line: #e2e8f0;
+  --cta: #f97316;
+  --cta-hover: #ea580c;
+  --max: 980px;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color: var(--text);
+  background: #f8fafc;
+  line-height: 1.55;
+  padding-top: 58px; /* room for fixed toolbar */
+}
+
+/* Fixed top toolbar (all pages) */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  background: rgba(255,255,255,0.98);
+  border-bottom: 1px solid var(--line);
+  z-index: 999;
+  backdrop-filter: blur(8px);
+}
+
+.topbar-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 800;
+  text-decoration: none;
+  color: #0b1b33;
+  letter-spacing: -0.01em;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.toplink {
+  text-decoration: none;
+  color: #0f172a;
+  font-size: 13px;
+}
+
+header {
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  color: white;
+  padding: 44px 18px 34px;
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; }
+
+.hero {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  margin: 0;
+  color: rgba(255,255,255,0.86);
+  max-width: 68ch;
+  font-size: 14px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
+  background: var(--cta);
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 13px;
+  border: 0;
+}
+
+.btn:hover { background: var(--cta-hover); }
+
+.btn-top { padding: 9px 12px; }
+
+main { padding: 24px 18px 42px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
+}
+
+.grid { display: grid; gap: 16px; }
+
+.img {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.img img { display: block; width: 100%; height: auto; }
+
+h2 {
+  font-size: 16px;
+  margin: 18px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+p { margin: 0 0 10px; color: var(--text); }
+ul { margin: 10px 0 14px 18px; color: var(--text); }
+li { margin: 6px 0; }
+
+hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+.muted { color: var(--muted); font-size: 13px; }
+
+footer {
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  color: rgba(255,255,255,0.9);
+  padding: 34px 18px;
+}
+
+.footer-card { max-width: var(--max); margin: 0 auto; text-align: center; }
+
+.footer-card h2 { color: white; margin: 0 0 10px; font-size: 18px; }
+
+.footer-card p { color: rgba(255,255,255,0.85); }
+
+.small { margin-top: 18px; font-size: 12px; color: rgba(255,255,255,0.7); }
+
+.links a {
+  color: rgba(255,255,255,0.9);
+  text-decoration: underline;
+  margin: 0 10px;
+  font-size: 13px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  color: #1e3a8a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.table th, .table td {
+  text-align: left;
+  padding: 10px 10px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.table th {
+  color: #0f172a;
+  background: #f1f5f9;
+  border-top: 1px solid var(--line);
+}
+
+/* Clean city buttons (simple, uncluttered) */
+.city-grid {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.city-grid a {
+  display: block;
+  text-decoration: none;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.city-grid a:hover {
+  border-color: #cbd5e1;
+}
+""".strip()
 
 
 # -----------------------
-# TEMPLATES
+# HTML SHELL
 # -----------------------
-def base_html(*, title: str, canonical_path: str, body: str, description: str) -> str:
-    # Minimal, clean CSS; no JS.
+def base_html(*, title: str, canonical_path: str, description: str, body_inner: str) -> str:
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -122,188 +365,39 @@ def base_html(*, title: str, canonical_path: str, body: str, description: str) -
   <meta name="description" content="{esc(description)}" />
   <link rel="canonical" href="{esc(canonical_path)}" />
   <style>
-    :root {{
-      --bg: #0b1b33;
-      --bg2: #102a4d;
-      --text: #0f172a;
-      --muted: #475569;
-      --card: #ffffff;
-      --line: #e2e8f0;
-      --cta: #f97316;
-      --cta-hover: #ea580c;
-      --max: 980px;
-      --radius: 14px;
-    }}
-    * {{ box-sizing: border-box; }}
-    body {{
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color: var(--text);
-      background: #f8fafc;
-      line-height: 1.55;
-    }}
-    header {{
-      background: linear-gradient(135deg, var(--bg), var(--bg2));
-      color: white;
-      padding: 44px 18px 34px;
-    }}
-    .wrap {{
-      max-width: var(--max);
-      margin: 0 auto;
-    }}
-    .hero {{
-      display: grid;
-      gap: 14px;
-      justify-items: center;
-      text-align: center;
-    }}
-    .hero h1 {{
-      margin: 0;
-      font-size: 26px;
-      letter-spacing: -0.01em;
-    }}
-    .sub {{
-      margin: 0;
-      color: rgba(255,255,255,0.86);
-      max-width: 68ch;
-      font-size: 14px;
-    }}
-    .btn {{
-      display: inline-block;
-      padding: 10px 14px;
-      background: var(--cta);
-      color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 13px;
-    }}
-    .btn:hover {{ background: var(--cta-hover); }}
-    main {{
-      padding: 24px 18px 42px;
-    }}
-    .card {{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
-    }}
-    .grid {{
-      display: grid;
-      gap: 16px;
-    }}
-    .img {{
-      overflow: hidden;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }}
-    .img img {{
-      display: block;
-      width: 100%;
-      height: auto;
-    }}
-    h2 {{
-      font-size: 16px;
-      margin: 18px 0 8px;
-      letter-spacing: -0.01em;
-    }}
-    p {{ margin: 0 0 10px; color: var(--text); }}
-    ul {{ margin: 10px 0 14px 18px; color: var(--text); }}
-    li {{ margin: 6px 0; }}
-    hr {{
-      border: none;
-      border-top: 1px solid var(--line);
-      margin: 18px 0;
-    }}
-    .muted {{ color: var(--muted); font-size: 13px; }}
-    footer {{
-      background: linear-gradient(135deg, var(--bg), var(--bg2));
-      color: rgba(255,255,255,0.9);
-      padding: 34px 18px;
-    }}
-    .footer-card {{
-      max-width: var(--max);
-      margin: 0 auto;
-      text-align: center;
-    }}
-    .footer-card h2 {{
-      color: white;
-      margin: 0 0 10px;
-      font-size: 18px;
-    }}
-    .footer-card p {{ color: rgba(255,255,255,0.85); }}
-    .footer-card a {{ margin-top: 10px; }}
-    .small {{
-      margin-top: 18px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-    }}
-    .links a {{
-      color: rgba(255,255,255,0.9);
-      text-decoration: underline;
-      margin: 0 10px;
-      font-size: 13px;
-    }}
-    .pill {{
-      display: inline-block;
-      padding: 4px 10px;
-      background: #eef2ff;
-      border: 1px solid #e0e7ff;
-      color: #1e3a8a;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }}
-    .table {{
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 14px;
-    }}
-    .table th, .table td {{
-      text-align: left;
-      padding: 10px 10px;
-      border-top: 1px solid var(--line);
-      vertical-align: top;
-    }}
-    .table th {{
-      color: #0f172a;
-      background: #f1f5f9;
-      border-top: 1px solid var(--line);
-    }}
+{CSS}
   </style>
 </head>
 <body>
-{body}
+{toolbar_html()}
+{body_inner}
 </body>
 </html>
 """
 
-def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
-    # Enforce SEO rule: H1 == Title
-    h1 = make_h1_title(SERVICE_NAME, city, state)
+
+# -----------------------
+# PAGES
+# -----------------------
+def city_page(*, city: str, state: str) -> str:
+    h1 = make_city_h1(CONFIG.service_name, city, state)
     title = h1  # EXACT match per your rule
 
-    # Keep city mentions controlled: use it in H1 + a couple of natural spots only.
-    # Use “the area” / “locally” elsewhere.
     description = clamp_title(
-        f"Typical {SERVICE_NAME.lower()} pricing, what affects cost, DIY vs pro, and what’s included — for {city}, {state}.",
+        f"Typical {CONFIG.service_name.lower()} pricing, what affects cost, DIY vs pro, and what’s included — for {city}, {state}.",
         155,
     )
 
-    image_src = unsplash_image_url(f"front door peephole installation")
-
     canonical = f"/{city_state_slug(city, state)}/"
 
-    body = f"""
+    body_inner = f"""
 <header>
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
       Straightforward pricing guidance, what affects the total, and what you typically get with a professional install.
     </p>
-    <a class="btn" href="{esc(PRIMARY_CTA_HREF)}">{esc(PRIMARY_CTA_TEXT)}</a>
+    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
 </header>
 
@@ -313,7 +407,7 @@ def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
       <div class="pill">Local cost guide</div>
 
       <div class="img" style="margin-top:12px;">
-        <img src="{image_src}" alt="Door viewer installed in a front door" loading="lazy" />
+        <img src="{esc(LOCAL_IMAGE_CITY)}" alt="Door viewer installed in a front door" loading="lazy" />
       </div>
 
       <h2>{esc(H2_HEADINGS[0])}</h2>
@@ -358,8 +452,9 @@ def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
 
       <h2>{esc(H2_HEADINGS[6])}</h2>
       <p class="muted">
-        Estimated installed cost in {esc(city)}, {esc(state)} (most projects): 
+        Estimated installed cost in {esc(city)}, {esc(state)} (most projects):
       </p>
+
       <table class="table" aria-label="Cost estimate table">
         <thead>
           <tr>
@@ -370,8 +465,8 @@ def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
         </thead>
         <tbody>
           <tr>
-            <td>{esc(SERVICE_NAME)}</td>
-            <td>${cost_low}–${cost_high}</td>
+            <td>{esc(CONFIG.service_name)}</td>
+            <td>${CONFIG.cost_low}–${CONFIG.cost_high}</td>
             <td>Door material, thickness, resizing/repair, viewer quality</td>
           </tr>
         </tbody>
@@ -379,10 +474,6 @@ def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
 
       <p class="muted" style="margin-top:10px;">
         These are “typical” ranges—actual quotes can vary by door type, hardware choice, and job complexity.
-      </p>
-
-      <p style="margin-top:14px;">
-        <a href="/articles/">More cost guides</a>
       </p>
     </section>
   </div>
@@ -392,46 +483,43 @@ def city_page(*, city: str, state: str, cost_low: int, cost_high: int) -> str:
   <div class="footer-card">
     <h2>Ready to move forward?</h2>
     <p>Request a free quote and we’ll confirm the right door viewer and installation approach.</p>
-    <a class="btn" href="{esc(PRIMARY_CTA_HREF)}">{esc(PRIMARY_CTA_TEXT)}</a>
+    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
     <div class="small">
-      © {esc(BRAND_NAME)}. All rights reserved.
+      © {esc(CONFIG.brand_name)}. All rights reserved.
       <div class="links" style="margin-top:10px;">
         <a href="/">Home</a>
-        <a href="/articles/">Cost Guides</a>
       </div>
     </div>
   </div>
 </footer>
-"""
-    return base_html(title=title, canonical_path=canonical, body=body, description=description)
+""".rstrip()
+
+    return base_html(title=title, canonical_path=canonical, description=description, body_inner=body_inner)
+
 
 def homepage(*, cities: list[tuple[str, str]]) -> str:
-    # One H1 on homepage too
-    h1 = clamp_title(f"{SERVICE_NAME} Cost by City (US)", 70)
+    h1 = clamp_title(f"How Much Does {CONFIG.service_name} Cost?", 70)
     title = h1
 
     description = clamp_title(
-        f"Browse {SERVICE_NAME.lower()} cost estimates across major US cities. Learn what affects price and when to hire a pro.",
+        f"Nationwide {CONFIG.service_name.lower()} pricing ranges, what affects cost, and local estimates by city.",
         155,
     )
 
-    # Simple image for home
-    image_src = unsplash_image_url("front door home security")
+    city_links = "\n".join(
+        f'<li><a href="{esc("/" + city_state_slug(city, state) + "/")}">{esc(city)}, {esc(state)}</a></li>'
+        for city, state in cities
+    )
 
-    # Build list of links
-    links = []
-    for city, state in cities:
-        path = f"/{city_state_slug(city, state)}/"
-        links.append(f'<li><a href="{esc(path)}">{esc(city)}, {esc(state)}</a></li>')
-
-    body = f"""
+    body_inner = f"""
 <header>
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
-      Quick, scannable estimates and the factors that usually change the price. Pick your city to get started.
+      Nationwide, most {esc(CONFIG.service_name.lower())} projects range from ${CONFIG.cost_low} to ${CONFIG.cost_high}
+      depending on scope and door type. Pick your city for local estimates.
     </p>
-    <a class="btn" href="{esc(PRIMARY_CTA_HREF)}">{esc(PRIMARY_CTA_TEXT)}</a>
+    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
 </header>
 
@@ -440,24 +528,37 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
     <div class="pill">Nationwide overview</div>
 
     <div class="img" style="margin-top:12px;">
-      <img src="{image_src}" alt="Front door and hardware" loading="lazy" />
+      <img src="{esc(LOCAL_IMAGE_HOME)}" alt="Front door and hardware" loading="lazy" />
     </div>
 
-    <h2>How pricing usually works</h2>
+    <!-- SEO-friendly sections similar to your screenshot -->
+    <h2>Door Viewer Installation</h2>
     <p>
-      Installation cost typically depends on door material (wood vs metal), door thickness, whether a hole already exists,
-      and the type of door viewer you choose.
+      We provide professional peephole installation for front doors, apartment doors, and security doors using quality door viewers
+      that improve visibility and home security.
     </p>
 
-    <h2>Choose a city</h2>
+    <h2>How to Install a Peephole Professionally</h2>
+    <p>
+      A typical install includes choosing the right height, drilling a clean hole, fitting the viewer to your door thickness,
+      and tightening it so the trim sits flush without wobble.
+    </p>
+
+    <h2>Peephole Repair and Replacement Services</h2>
+    <p>
+      Replacement is common when the lens is cloudy, the viewer is loose, or you want a wider viewing angle. If the existing hole is damaged
+      or oversized, a pro can recommend a compatible option and secure fit.
+    </p>
+
+    <hr />
+
+    <h2>Choose your city for local estimates</h2>
     <p class="muted">City pages use clean URLs that include city + state for clarity.</p>
-    <ul>
-      {''.join(links)}
-    </ul>
 
-    <p style="margin-top:14px;">
-      <a href="/articles/">More cost guides</a>
-    </p>
+    <!-- Clean city buttons (grid) -->
+    <ul class="city-grid">
+      {city_links}
+    </ul>
   </section>
 </main>
 
@@ -465,12 +566,13 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
   <div class="footer-card">
     <h2>Ready to move forward?</h2>
     <p>Request a free quote and we’ll confirm the right door viewer and installation approach.</p>
-    <a class="btn" href="{esc(PRIMARY_CTA_HREF)}">{esc(PRIMARY_CTA_TEXT)}</a>
-    <div class="small">© {esc(BRAND_NAME)}. All rights reserved.</div>
+    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
+    <div class="small">© {esc(CONFIG.brand_name)}. All rights reserved.</div>
   </div>
 </footer>
-"""
-    return base_html(title=title, canonical_path="/", body=body, description=description)
+""".rstrip()
+
+    return base_html(title=title, canonical_path="/", description=description, body_inner=body_inner)
 
 
 # -----------------------
@@ -480,25 +582,21 @@ def write_file(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
 
+
 def main() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    CONFIG.output_dir.mkdir(parents=True, exist_ok=True)
 
     # Homepage
-    write_file(OUTPUT_DIR / "index.html", homepage(cities=CITIES))
+    write_file(CONFIG.output_dir / "index.html", homepage(cities=CITIES))
 
     # City pages
     for city, state in CITIES:
         slug = city_state_slug(city, state)
-        out = OUTPUT_DIR / slug / "index.html"
-        html_page = city_page(
-            city=city,
-            state=state,
-            cost_low=DEFAULT_COST_LOW,
-            cost_high=DEFAULT_COST_HIGH,
-        )
-        write_file(out, html_page)
+        out = CONFIG.output_dir / slug / "index.html"
+        write_file(out, city_page(city=city, state=state))
 
-    print(f"✅ Generated {1 + len(CITIES)} pages into: {OUTPUT_DIR.resolve()}")
+    print(f"✅ Generated {1 + len(CITIES)} pages into: {CONFIG.output_dir.resolve()}")
+
 
 if __name__ == "__main__":
     main()
