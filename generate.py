@@ -16,7 +16,7 @@ SEO rules enforced:
 - Controlled H2 set (city pages only use headings from H2_HEADINGS)
 - Avoid over-repeating city name in body copy
 - Cost section near the bottom
-- Natural CTA at the bottom
+- Natural CTA at the bottom (exact text required)
 """
 
 from __future__ import annotations
@@ -32,7 +32,8 @@ import re
 # -----------------------
 @dataclass(frozen=True)
 class SiteConfig:
-    service_name: str = "Peephole Installation"
+    # Service phrasing tuned to include strong close variants (peephole + door viewer).
+    service_name: str = "Peephole & Door Viewer Installation"
     brand_name: str = "Peephole Installation Company"
     cta_text: str = "Get Free Estimate"
     cta_href: str = "mailto:hello@example.com?subject=Free%20Quote%20Request"
@@ -45,13 +46,15 @@ CONFIG = SiteConfig()
 
 # Controlled H2 set (city pages ONLY pull headings from this list)
 H2_HEADINGS = [
-    "What’s included in professional installation",
-    "Typical materials and door types",
-    "DIY vs professional installation",
-    "How long the work usually takes",
-    "When to replace an existing door viewer",
-    "Frequently asked questions",
-    "Cost estimate",
+    "Peephole vs Door Viewer",
+    "Can You Add a Peephole to a Door?",
+    "Where Should a Peephole Go?",
+    "Door Types and Common Install Issues",
+    "DIY vs Professional Installation",
+    "Replacing an Old Door Viewer",
+    "How Long Installation Takes",
+    "Peephole Installation Cost",
+    "Service Area",
 ]
 
 CITIES: list[tuple[str, str]] = [
@@ -77,8 +80,7 @@ CITIES: list[tuple[str, str]] = [
     ("Washington", "DC"),
 ]
 
-# Prefer a local image so it always works on Cloudflare Pages.
-# Put a royalty-free image at: public/assets/door-viewer.jpg
+# Prefer local images so it always works on Cloudflare Pages.
 LOCAL_IMAGE_CITY = "/assets/door-viewer.jpg"
 LOCAL_IMAGE_HOME = "/assets/front-door.jpg"
 
@@ -377,6 +379,60 @@ def base_html(*, title: str, canonical_path: str, description: str, body_inner: 
 
 
 # -----------------------
+# CONTENT (shared)
+# -----------------------
+def shared_sections_html(*, city: str | None = None, state: str | None = None) -> str:
+    # Keep city mentions light to avoid repetition.
+    local_line = ""
+    if city and state:
+        local_line = f' <span class="muted">Serving {esc(city)}, {esc(state)}.</span>'
+
+    return f"""
+<h2>{esc(H2_HEADINGS[0])}</h2>
+<p>
+  People use “peephole” and “door viewer” for the same thing. It is a small lens set through the door.
+  It lets you see outside before you open.{local_line}
+</p>
+
+<h2>{esc(H2_HEADINGS[1])}</h2>
+<p>
+  In many cases, yes. A pro can add a viewer to a solid wood door, a steel door, or an apartment entry door.
+  The key is matching the viewer to the door thickness and drilling a clean hole.
+</p>
+
+<h2>{esc(H2_HEADINGS[2])}</h2>
+<p>
+  Place it at eye level for the main user. Many installs land around 58–60 inches from the floor.
+  If more than one person uses the door, pick a middle height that still feels natural.
+</p>
+
+<h2>{esc(H2_HEADINGS[3])}</h2>
+<p>
+  Wood doors drill fast. Metal doors can take longer and may need different bits.
+  Doors with panels, glass, or reinforcements can limit where the hole can go.
+</p>
+
+<h2>{esc(H2_HEADINGS[4])}</h2>
+<p>
+  DIY can work if you have the right tools and a simple door. A pro helps avoid splintering,
+  a crooked hole, or a loose fit. This matters most on metal or finished doors.
+</p>
+
+<h2>{esc(H2_HEADINGS[5])}</h2>
+<p>
+  Replace a viewer when the lens looks cloudy, the tube spins, or the angle feels narrow.
+  If the old hole is worn or oversized, a pro can recommend a size that fits well.
+</p>
+
+<h2>{esc(H2_HEADINGS[6])}</h2>
+<p>
+  Many installs finish in one visit. Extra time may be needed if the old hardware is stuck,
+  the hole needs repair, or the door material is hard to drill.
+</p>
+""".rstrip()
+
+
+# -----------------------
 # PAGES
 # -----------------------
 def city_page(*, city: str, state: str) -> str:
@@ -384,7 +440,7 @@ def city_page(*, city: str, state: str) -> str:
     title = h1  # EXACT match per your rule
 
     description = clamp_title(
-        f"Typical {CONFIG.service_name.lower()} pricing, what affects cost, DIY vs pro, and what’s included — for {city}, {state}.",
+        f"{CONFIG.service_name} pricing, placement, and install details for {city}, {state}.",
         155,
     )
 
@@ -395,7 +451,7 @@ def city_page(*, city: str, state: str) -> str:
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
-      Straightforward pricing guidance, what affects the total, and what you typically get with a professional install.
+      A clear guide to choosing a door viewer, placing it at the right height, and getting a clean install.
     </p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
@@ -404,55 +460,19 @@ def city_page(*, city: str, state: str) -> str:
 <main class="wrap">
   <div class="grid">
     <section class="card">
-      <div class="pill">Local cost guide</div>
+      <div class="pill">Local install guide</div>
 
       <div class="img" style="margin-top:12px;">
         <img src="{esc(LOCAL_IMAGE_CITY)}" alt="Door viewer installed in a front door" loading="lazy" />
       </div>
 
-      <h2>{esc(H2_HEADINGS[0])}</h2>
-      <p>
-        Contractors typically handle measurement, drilling, clean installation, and alignment so the viewer sits flush and works smoothly.
-        If your door material is harder (metal) or requires special bits, that can increase labor time.
-      </p>
-
-      <h2>{esc(H2_HEADINGS[1])}</h2>
-      <p>
-        Common installs include standard wood doors, apartment entry doors, and security doors.
-        Costs vary based on door thickness, viewer quality, and whether the existing hole needs to be resized or repaired.
-      </p>
-
-      <h2>{esc(H2_HEADINGS[2])}</h2>
-      <p>
-        DIY can be workable if you already have the right drill bits and the door is easy to drill.
-        Pros reduce the risk of splintering, misalignment, or cosmetic damage—especially on metal or reinforced doors.
-      </p>
-
-      <h2>{esc(H2_HEADINGS[3])}</h2>
-      <p>
-        Most straightforward installs are typically completed in a single visit.
-        Additional time may be needed when replacing a damaged viewer, patching an oversized hole, or working on specialty doors.
-      </p>
-
-      <h2>{esc(H2_HEADINGS[4])}</h2>
-      <p>
-        Replacement is common when the lens is cloudy, the viewer is loose, the mechanism sticks, or you want a wider viewing angle.
-        If the current hole is worn or enlarged, a pro can recommend a compatible replacement and secure fit.
-      </p>
-
-      <h2>{esc(H2_HEADINGS[5])}</h2>
-      <ul>
-        <li><strong>Do I need landlord approval?</strong> In many rentals, yes—check your lease or ask before drilling.</li>
-        <li><strong>Will it damage the door?</strong> With correct tools and technique, the hole is clean and the trim sits flush.</li>
-        <li><strong>Can you install on metal doors?</strong> Often yes, but it may require specialty bits and careful drilling.</li>
-        <li><strong>What height should it be?</strong> Typically around eye level for the primary user; pros can help choose placement.</li>
-      </ul>
+      {shared_sections_html(city=city, state=state)}
 
       <hr />
 
-      <h2>{esc(H2_HEADINGS[6])}</h2>
+      <h2>{esc(H2_HEADINGS[7])}</h2>
       <p class="muted">
-        Estimated installed cost in {esc(city)}, {esc(state)} (most projects):
+        Estimated installed cost in {esc(city)}, {esc(state)} (many projects):
       </p>
 
       <table class="table" aria-label="Cost estimate table">
@@ -467,13 +487,20 @@ def city_page(*, city: str, state: str) -> str:
           <tr>
             <td>{esc(CONFIG.service_name)}</td>
             <td>${CONFIG.cost_low}–${CONFIG.cost_high}</td>
-            <td>Door material, thickness, resizing/repair, viewer quality</td>
+            <td>Door material, thickness, patching/resizing, viewer quality</td>
           </tr>
         </tbody>
       </table>
 
       <p class="muted" style="margin-top:10px;">
-        These are “typical” ranges—actual quotes can vary by door type, hardware choice, and job complexity.
+        Final pricing depends on the door, hardware choice, and any repair work around the hole.
+      </p>
+
+      <hr />
+
+      <h2>{esc(H2_HEADINGS[8])}</h2>
+      <p>
+        We schedule work across the metro area. If you are nearby, you can request a quote and we will confirm fit and timing.
       </p>
     </section>
   </div>
@@ -481,8 +508,8 @@ def city_page(*, city: str, state: str) -> str:
 
 <footer>
   <div class="footer-card">
-    <h2>Ready to move forward?</h2>
-    <p>Request a free quote and we’ll confirm the right door viewer and installation approach.</p>
+    <h2>Next steps</h2>
+    <p>Ready to move forward? Request a free quote</p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
     <div class="small">
       © {esc(CONFIG.brand_name)}. All rights reserved.
@@ -498,11 +525,12 @@ def city_page(*, city: str, state: str) -> str:
 
 
 def homepage(*, cities: list[tuple[str, str]]) -> str:
-    h1 = clamp_title(f"How Much Does {CONFIG.service_name} Cost?", 70)
+    # Non-location H1 (per your requirement). Keep it short and human.
+    h1 = clamp_title(CONFIG.service_name, 70)
     title = h1
 
     description = clamp_title(
-        f"Nationwide {CONFIG.service_name.lower()} pricing ranges, what affects cost, and local estimates by city.",
+        "Simple guide to door peephole and door viewer installation, placement, and typical costs.",
         155,
     )
 
@@ -516,8 +544,7 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
-      Nationwide, most {esc(CONFIG.service_name.lower())} projects range from ${CONFIG.cost_low} to ${CONFIG.cost_high}
-      depending on scope and door type. Pick your city for local estimates.
+      Add a clear view to your front door. Learn what gets installed, where it goes, and what the work tends to cost.
     </p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
@@ -525,35 +552,25 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
 
 <main class="wrap">
   <section class="card">
-    <div class="pill">Nationwide overview</div>
+    <div class="pill">Straight answers</div>
 
     <div class="img" style="margin-top:12px;">
       <img src="{esc(LOCAL_IMAGE_HOME)}" alt="Front door and hardware" loading="lazy" />
     </div>
 
-    <!-- SEO-friendly sections similar to your screenshot -->
-    <h2>Door Viewer Installation</h2>
-    <p>
-      We provide professional peephole installation for front doors, apartment doors, and security doors using quality door viewers
-      that improve visibility and home security.
-    </p>
+    {shared_sections_html()}
 
-    <h2>How to Install a Peephole Professionally</h2>
-    <p>
-      A typical install includes choosing the right height, drilling a clean hole, fitting the viewer to your door thickness,
-      and tightening it so the trim sits flush without wobble.
-    </p>
+    <hr />
 
-    <h2>Peephole Repair and Replacement Services</h2>
-    <p>
-      Replacement is common when the lens is cloudy, the viewer is loose, or you want a wider viewing angle. If the existing hole is damaged
-      or oversized, a pro can recommend a compatible option and secure fit.
+    <h2>{esc(H2_HEADINGS[7])}</h2>
+    <p class="muted">
+      Many installs fall in the ${CONFIG.cost_low}–${CONFIG.cost_high} range. Door material and repair work can change that.
     </p>
 
     <hr />
 
-    <h2>Choose your city for local estimates</h2>
-    <p class="muted">City pages use clean URLs that include city + state for clarity.</p>
+    <h2>Choose your city</h2>
+    <p class="muted">Select a location for a page with local pricing context and the same full guide.</p>
 
     <!-- Clean city buttons (grid) -->
     <ul class="city-grid">
@@ -564,8 +581,8 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
 
 <footer>
   <div class="footer-card">
-    <h2>Ready to move forward?</h2>
-    <p>Request a free quote and we’ll confirm the right door viewer and installation approach.</p>
+    <h2>Next steps</h2>
+    <p>Ready to move forward? Request a free quote</p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
     <div class="small">© {esc(CONFIG.brand_name)}. All rights reserved.</div>
   </div>
