@@ -32,8 +32,9 @@ import re
 # -----------------------
 @dataclass(frozen=True)
 class SiteConfig:
-    # Service phrasing tuned to include strong close variants (peephole + door viewer).
-    service_name: str = "Peephole & Door Viewer Installation"
+    # Ahrefs-driven phrasing: primary keyword + closest parent-topic variant.
+    # Keep homepage H1 non-location and <= 70 chars via clamp_title().
+    service_name: str = "Peephole/Door Viewer Installation Services"
     brand_name: str = "Peephole Installation Company"
     cta_text: str = "Get Free Estimate"
     cta_href: str = "mailto:hello@example.com?subject=Free%20Quote%20Request"
@@ -45,13 +46,14 @@ class SiteConfig:
 CONFIG = SiteConfig()
 
 # Controlled H2 set (city pages ONLY pull headings from this list)
+# Built from Ahrefs themes: peephole height, adding peephole to door, door hole, cost.
 H2_HEADINGS = [
     "Peephole vs Door Viewer",
-    "Can You Add a Peephole to a Door?",
-    "Where Should a Peephole Go?",
-    "Door Types and Common Install Issues",
-    "DIY vs Professional Installation",
-    "Replacing an Old Door Viewer",
+    "Can You Add a Peephole to an Existing Door?",
+    "What Height Should a Peephole Be?",
+    "What Size Hole Does a Peephole Need?",
+    "DIY vs Pro: When to Hire Help",
+    "Replacing an Old Peephole",
     "How Long Installation Takes",
     "Peephole Installation Cost",
     "Service Area",
@@ -390,44 +392,44 @@ def shared_sections_html(*, city: str | None = None, state: str | None = None) -
     return f"""
 <h2>{esc(H2_HEADINGS[0])}</h2>
 <p>
-  People use “peephole” and “door viewer” for the same thing. It is a small lens set through the door.
-  It lets you see outside before you open.{local_line}
+  “Peephole” and “door viewer” often mean the same thing: a small lens set through the door.
+  It lets you see who is outside before you open.{local_line}
 </p>
 
 <h2>{esc(H2_HEADINGS[1])}</h2>
 <p>
-  In many cases, yes. A pro can add a viewer to a solid wood door, a steel door, or an apartment entry door.
-  The key is matching the viewer to the door thickness and drilling a clean hole.
+  Yes. We can install a peephole on most wood and metal doors, as long as there is a clear spot for the hole.
+  We also match the viewer to the door thickness so it tightens correctly.
 </p>
 
 <h2>{esc(H2_HEADINGS[2])}</h2>
 <p>
-  Place it at eye level for the main user. Many installs land around 58–60 inches from the floor.
-  If more than one person uses the door, pick a middle height that still feels natural.
+  Set it at eye level for the main user. Many installs land around 58–60 inches from the finished floor.
+  If more than one person uses the door, a middle height usually works best.
 </p>
 
 <h2>{esc(H2_HEADINGS[3])}</h2>
 <p>
-  Wood doors drill fast. Metal doors can take longer and may need different bits.
-  Doors with panels, glass, or reinforcements can limit where the hole can go.
+  Most standard viewers use a drilled hole through the door. The exact size depends on the hardware.
+  If there is an old hole, we can often reuse it or resize it for a snug fit.
 </p>
 
 <h2>{esc(H2_HEADINGS[4])}</h2>
 <p>
-  DIY can work if you have the right tools and a simple door. A pro helps avoid splintering,
-  a crooked hole, or a loose fit. This matters most on metal or finished doors.
+  DIY can work on a simple door if you have the right tools and measure carefully.
+  A pro helps prevent splintering, a crooked hole, or loose hardware—especially on metal or finished doors.
 </p>
 
 <h2>{esc(H2_HEADINGS[5])}</h2>
 <p>
-  Replace a viewer when the lens looks cloudy, the tube spins, or the angle feels narrow.
-  If the old hole is worn or oversized, a pro can recommend a size that fits well.
+  Replace a peephole when the lens looks cloudy, the tube spins, or the view feels too narrow.
+  If the old hole is worn, we tell you what size will cover it cleanly.
 </p>
 
 <h2>{esc(H2_HEADINGS[6])}</h2>
 <p>
-  Many installs finish in one visit. Extra time may be needed if the old hardware is stuck,
-  the hole needs repair, or the door material is hard to drill.
+  Many installs finish in one visit. Extra time may be needed if old hardware is stuck,
+  the hole needs patching, or the door material is hard to drill.
 </p>
 """.rstrip()
 
@@ -437,10 +439,10 @@ def shared_sections_html(*, city: str | None = None, state: str | None = None) -
 # -----------------------
 def city_page(*, city: str, state: str) -> str:
     h1 = make_city_h1(CONFIG.service_name, city, state)
-    title = h1  # EXACT match per your rule
+    title = h1  # EXACT match per rule
 
     description = clamp_title(
-        f"{CONFIG.service_name} pricing, placement, and install details for {city}, {state}.",
+        f"{CONFIG.service_name} basics, install steps, and typical pricing for {city}, {state}.",
         155,
     )
 
@@ -451,7 +453,7 @@ def city_page(*, city: str, state: str) -> str:
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
-      A clear guide to choosing a door viewer, placing it at the right height, and getting a clean install.
+      Straight answers on what gets installed, where it goes, and what affects the price.
     </p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
@@ -487,20 +489,20 @@ def city_page(*, city: str, state: str) -> str:
           <tr>
             <td>{esc(CONFIG.service_name)}</td>
             <td>${CONFIG.cost_low}–${CONFIG.cost_high}</td>
-            <td>Door material, thickness, patching/resizing, viewer quality</td>
+            <td>Door material, thickness, hole repair/resizing, viewer quality</td>
           </tr>
         </tbody>
       </table>
 
       <p class="muted" style="margin-top:10px;">
-        Final pricing depends on the door, hardware choice, and any repair work around the hole.
+        Final pricing depends on the door, the hardware size, and any repair work around the hole.
       </p>
 
       <hr />
 
       <h2>{esc(H2_HEADINGS[8])}</h2>
       <p>
-        We schedule work across the metro area. If you are nearby, you can request a quote and we will confirm fit and timing.
+        We schedule work across the metro area. If you are nearby, request a quote and we will confirm fit and timing.
       </p>
     </section>
   </div>
@@ -525,12 +527,12 @@ def city_page(*, city: str, state: str) -> str:
 
 
 def homepage(*, cities: list[tuple[str, str]]) -> str:
-    # Non-location H1 (per your requirement). Keep it short and human.
+    # Non-location H1 (per requirement). Keep it short and human.
     h1 = clamp_title(CONFIG.service_name, 70)
-    title = h1
+    title = h1  # EXACT match
 
     description = clamp_title(
-        "Simple guide to door peephole and door viewer installation, placement, and typical costs.",
+        "Simple guide to peephole and door viewer installation, placement height, and typical costs.",
         155,
     )
 
@@ -544,7 +546,7 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
   <div class="wrap hero">
     <h1>{esc(h1)}</h1>
     <p class="sub">
-      Add a clear view to your front door. Learn what gets installed, where it goes, and what the work tends to cost.
+      Add a clear view to your entry door. Learn what gets installed, where it goes, and what the work tends to cost.
     </p>
     <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
   </div>
@@ -564,7 +566,7 @@ def homepage(*, cities: list[tuple[str, str]]) -> str:
 
     <h2>{esc(H2_HEADINGS[7])}</h2>
     <p class="muted">
-      Many installs fall in the ${CONFIG.cost_low}–${CONFIG.cost_high} range. Door material and repair work can change that.
+      Many installs fall in the ${CONFIG.cost_low}–${CONFIG.cost_high} range. Door material and hole repair can change that.
     </p>
 
     <hr />
