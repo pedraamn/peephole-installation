@@ -3,357 +3,302 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Peephole/Door Viewer Installation Services in San Diego, CA</title>
-  <meta name="description" content="Peephole/Door Viewer Installation Services basics, install steps, and typical pricing for San Diego, CA." />
+  <title>Exterior Door Viewer/Eyehole/Peephole Installation Services in San Di…</title>
+  <meta name="description" content="Wasp nest removal and wasp control guide with local context for San Diego, CA." />
   <link rel="canonical" href="/san-diego-ca/" />
   <style>
-:root {
-  --bg: #0b1b33;
-  --bg2: #102a4d;
-  --text: #0f172a;
-  --muted: #475569;
-  --card: #ffffff;
-  --line: #e2e8f0;
-  --cta: #f97316;
-  --cta-hover: #ea580c;
-  --max: 980px;
-  --radius: 14px;
+:root{
+  --bg:#fafaf9;
+  --surface:#ffffff;
+  --ink:#111827;
+  --muted:#4b5563;
+  --line:#e7e5e4;
+  --soft:#f5f5f4;
+
+  --cta:#16a34a;
+  --cta2:#15803d;
+
+  --max:980px;
+  --radius:16px;
+  --shadow:0 10px 30px rgba(17,24,39,0.06);
+  --shadow2:0 10px 24px rgba(17,24,39,0.08);
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{
+  margin:0;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.6;
+}
+a{color:inherit}
+a:focus{outline:2px solid var(--cta); outline-offset:2px}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(250,250,249,0.92);
+  backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.brand{
+  font-weight:900;
+  letter-spacing:-0.02em;
+  text-decoration:none;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.nav a{
+  text-decoration:none;
+  font-size:13px;
+  color:var(--muted);
+  padding:7px 10px;
+  border-radius:12px;
+  border:1px solid transparent;
+}
+.nav a:hover{
+  background:var(--soft);
+  border-color:var(--line);
+}
+.nav a[aria-current="page"]{
+  color:var(--ink);
+  background:var(--soft);
+  border:1px solid var(--line);
 }
 
-* { box-sizing: border-box; }
+.btn{
+  display:inline-block;
+  padding:9px 12px;
+  background:var(--cta);
+  color:#fff;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:900;
+  font-size:13px;
+  border:1px solid rgba(0,0,0,0.04);
+  box-shadow:0 8px 18px rgba(22,163,74,0.18);
+}
+.btn:hover{background:var(--cta2)}
+.btn:focus{outline:2px solid var(--cta2); outline-offset:2px}
 
-body {
-  margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  color: var(--text);
-  background: #f8fafc;
-  line-height: 1.55;
-  padding-top: 58px; /* room for fixed toolbar */
+/* IMPORTANT: nav links apply grey text; ensure CTA stays white in the toolbar */
+.nav a.btn{
+  color:#fff;
+  background:var(--cta);
+  border-color:rgba(0,0,0,0.04);
+}
+.nav a.btn:hover{background:var(--cta2)}
+.nav a.btn:focus{outline:2px solid var(--cta2); outline-offset:2px}
+
+header{
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(1200px 380px at 10% -20%, rgba(22,163,74,0.08), transparent 55%),
+    radial-gradient(900px 320px at 95% -25%, rgba(17,24,39,0.06), transparent 50%),
+    #fbfbfa;
+}
+.hero{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:34px 18px 24px;
+  display:grid;
+  gap:10px;
+  text-align:left;
+}
+.hero h1{
+  margin:0;
+  font-size:30px;
+  letter-spacing:-0.03em;
+  line-height:1.18;
+}
+.sub{margin:0; color:var(--muted); max-width:78ch; font-size:14px}
+
+main{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:22px 18px 46px;
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.img{
+  margin-top:14px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--soft);
+  box-shadow:var(--shadow2);
+}
+.img img{display:block; width:100%; height:auto}
+
+h2{
+  margin:18px 0 8px;
+  font-size:16px;
+  letter-spacing:-0.01em;
+}
+p{margin:0 0 10px}
+.muted{color:var(--muted); font-size:13px}
+hr{border:0; border-top:1px solid var(--line); margin:18px 0}
+
+.city-grid{
+  list-style:none;
+  padding:0;
+  margin:10px 0 0;
+  display:grid;
+  gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+}
+.city-grid a{
+  display:block;
+  text-decoration:none;
+  color:var(--ink);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 12px;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:0 10px 24px rgba(17,24,39,0.05);
+}
+.city-grid a:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px rgba(17,24,39,0.08);
 }
 
-/* Fixed top toolbar (all pages) */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 58px;
-  background: rgba(255,255,255,0.98);
-  border-bottom: 1px solid var(--line);
-  z-index: 999;
-  backdrop-filter: blur(8px);
+.callout{
+  margin:16px 0 12px;
+  padding:14px 14px;
+  border-radius:14px;
+  border:1px solid rgba(22,163,74,0.22);
+  background:linear-gradient(180deg, rgba(22,163,74,0.08), rgba(22,163,74,0.03));
 }
-
-.topbar-inner {
-  max-width: var(--max);
-  margin: 0 auto;
-  height: 100%;
-  padding: 0 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.callout-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  letter-spacing:-0.01em;
+  margin:0 0 6px;
 }
-
-.brand {
-  font-weight: 800;
-  text-decoration: none;
-  color: #0b1b33;
-  letter-spacing: -0.01em;
+.badge{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  background:rgba(22,163,74,0.14);
+  border:1px solid rgba(22,163,74,0.22);
+  color:var(--ink);
+  font-size:12px;
+  font-weight:900;
 }
+.callout p{margin:0; color:var(--muted); font-size:13px}
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+footer{
+  border-top:1px solid var(--line);
+  background:#fbfbfa;
 }
-
-.toplink {
-  text-decoration: none;
-  color: #0f172a;
-  font-size: 13px;
+.footer-inner{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:28px 18px;
+  display:grid;
+  gap:10px;
+  text-align:left;
 }
-
-header {
-  background: linear-gradient(135deg, var(--bg), var(--bg2));
-  color: white;
-  padding: 44px 18px 34px;
-}
-
-.wrap { max-width: var(--max); margin: 0 auto; }
-
-.hero {
-  display: grid;
-  gap: 14px;
-  justify-items: center;
-  text-align: center;
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: 26px;
-  letter-spacing: -0.01em;
-}
-
-.sub {
-  margin: 0;
-  color: rgba(255,255,255,0.86);
-  max-width: 68ch;
-  font-size: 14px;
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 14px;
-  background: var(--cta);
-  color: white;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 800;
-  font-size: 13px;
-  border: 0;
-}
-
-.btn:hover { background: var(--cta-hover); }
-
-.btn-top { padding: 9px 12px; }
-
-main { padding: 24px 18px 42px; }
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
-}
-
-.grid { display: grid; gap: 16px; }
-
-.img {
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-}
-
-.img img { display: block; width: 100%; height: auto; }
-
-h2 {
-  font-size: 16px;
-  margin: 18px 0 8px;
-  letter-spacing: -0.01em;
-}
-
-p { margin: 0 0 10px; color: var(--text); }
-ul { margin: 10px 0 14px 18px; color: var(--text); }
-li { margin: 6px 0; }
-
-hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
-
-.muted { color: var(--muted); font-size: 13px; }
-
-footer {
-  background: linear-gradient(135deg, var(--bg), var(--bg2));
-  color: rgba(255,255,255,0.9);
-  padding: 34px 18px;
-}
-
-.footer-card { max-width: var(--max); margin: 0 auto; text-align: center; }
-
-.footer-card h2 { color: white; margin: 0 0 10px; font-size: 18px; }
-
-.footer-card p { color: rgba(255,255,255,0.85); }
-
-.small { margin-top: 18px; font-size: 12px; color: rgba(255,255,255,0.7); }
-
-.links a {
-  color: rgba(255,255,255,0.9);
-  text-decoration: underline;
-  margin: 0 10px;
-  font-size: 13px;
-}
-
-.pill {
-  display: inline-block;
-  padding: 4px 10px;
-  background: #eef2ff;
-  border: 1px solid #e0e7ff;
-  color: #1e3a8a;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.table th, .table td {
-  text-align: left;
-  padding: 10px 10px;
-  border-top: 1px solid var(--line);
-  vertical-align: top;
-}
-
-.table th {
-  color: #0f172a;
-  background: #f1f5f9;
-  border-top: 1px solid var(--line);
-}
-
-/* Clean city buttons (simple, uncluttered) */
-.city-grid {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.city-grid a {
-  display: block;
-  text-decoration: none;
-  color: #0f172a;
-  background: #ffffff;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.city-grid a:hover {
-  border-color: #cbd5e1;
-}
+.footer-inner h2{margin:0; font-size:18px}
+.footer-links{display:flex; gap:12px; flex-wrap:wrap}
+.footer-links a{color:var(--muted); text-decoration:none; font-size:13px; padding:6px 0}
+.small{color:var(--muted); font-size:12px; margin-top:8px}
   </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="/">Peephole Installation Company</a>
-    <div class="topbar-actions">
-      <a class="toplink" href="/">Home</a>
-      <a class="btn btn-top" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">Peephole Installation Company</a>
+      <nav class="nav" aria-label="Primary navigation"><a href="/" aria-current="page">Home</a><a href="/cost/">Cost</a><a href="/how-to/">How-To</a><a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a></nav>
     </div>
   </div>
-</div>
 
 <header>
-  <div class="wrap hero">
-    <h1>Peephole/Door Viewer Installation Services in San Diego, CA</h1>
-    <p class="sub">
-      Straight answers on what gets installed, where it goes, and what affects the price.
-    </p>
-    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
+  <div class="hero">
+    <h1>Exterior Door Viewer/Eyehole/Peephole Installation Services in San Di…</h1>
   </div>
 </header>
+<main>
+  <section class="card">
+    <div class="img">
+      <img src="/picture.png" alt="Service image" loading="lazy" />
+    </div>
+    
+<h2>What Is a Peephole in a Door?</h2>
+<p>A peephole, also known as a door viewer or door eye, is a small optical device installed in an exterior door that allows someone inside to see who is outside before opening the door. Peepholes are commonly used on entry doors to improve personal safety and visibility.</</p>
 
-<main class="wrap">
-  <div class="grid">
-    <section class="card">
-      <div class="pill">Local install guide</div>
+<h2>What Is Peephole Installation?</h2>
+<p>Peephole installation is the process of drilling a precise hole through a door and securely installing a door viewer. Proper installation ensures a clear viewing angle, correct placement, and a clean finish without damaging the door.</</p>
 
-      <div class="img" style="margin-top:12px;">
-        <img src="/assets/door-viewer.jpg" alt="Door viewer installed in a front door" loading="lazy" />
-      </div>
+<h2>How Do Peepholes Work?</h2>
+<p>Peepholes work using a wide-angle lens that allows a person inside to see a broad area outside the door. This design makes it possible to identify visitors, deliveries, or unexpected guests without opening the door.</</p>
 
-      
-<h2>Peephole vs Door Viewer</h2>
-<p>
-  “Peephole” and “door viewer” often mean the same thing: a small lens set through the door.
-  It lets you see who is outside before you open. <span class="muted">Serving San Diego, CA.</span>
-</p>
+<h2>Best Height for a Door Peephole</h2>
+<p>The standard peephole height is typically between 58 and 62 inches from the floor. This range provides a comfortable viewing angle for most adults. In some homes, alternative heights or wide-angle viewers are used to accommodate children, wheelchair users, or multiple occupants.</</p>
 
-<h2>Can You Add a Peephole to an Existing Door?</h2>
-<p>
-  Yes. We can install a peephole on most wood and metal doors, as long as there is a clear spot for the hole.
-  We also match the viewer to the door thickness so it tightens correctly.
-</p>
+<h2>Types of Door Peepholes and Viewers</h2>
+<p>There are several types of door peepholes available, including standard optical peepholes, wide-angle viewers, privacy-enhanced models, and digital door viewers. The best option depends on door thickness, desired viewing angle, and security needs.</</p>
 
-<h2>What Height Should a Peephole Be?</h2>
-<p>
-  Set it at eye level for the main user. Many installs land around 58–60 inches from the finished floor.
-  If more than one person uses the door, a middle height usually works best.
-</p>
-
-<h2>What Size Hole Does a Peephole Need?</h2>
-<p>
-  Most standard viewers use a drilled hole through the door. The exact size depends on the hardware.
-  If there is an old hole, we can often reuse it or resize it for a snug fit.
-</p>
-
-<h2>DIY vs Pro: When to Hire Help</h2>
-<p>
-  DIY can work on a simple door if you have the right tools and measure carefully.
-  A pro helps prevent splintering, a crooked hole, or loose hardware—especially on metal or finished doors.
-</p>
-
-<h2>Replacing an Old Peephole</h2>
-<p>
-  Replace a peephole when the lens looks cloudy, the tube spins, or the view feels too narrow.
-  If the old hole is worn, we tell you what size will cover it cleanly.
-</p>
-
-<h2>How Long Installation Takes</h2>
-<p>
-  Many installs finish in one visit. Extra time may be needed if old hardware is stuck,
-  the hole needs patching, or the door material is hard to drill.
-</p>
-
-      <hr />
-
-      <h2>Peephole Installation Cost</h2>
-      <p class="muted">
-        Estimated installed cost in San Diego, CA (many projects):
-      </p>
-
-      <table class="table" aria-label="Cost estimate table">
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Typical range</th>
-            <th>What moves the price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Peephole/Door Viewer Installation Services</td>
-            <td>$110–$220</td>
-            <td>Door material, thickness, hole repair/resizing, viewer quality</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="muted" style="margin-top:10px;">
-        Final pricing depends on the door, the hardware size, and any repair work around the hole.
-      </p>
-
-      <hr />
-
-      <h2>Service Area</h2>
-      <p>
-        We schedule work across the metro area. If you are nearby, request a quote and we will confirm fit and timing.
-      </p>
-    </section>
+<h2>Professional Peephole Installation vs DIY</h2>
+<p>DIY peephole installation may seem simple, but improper drilling or incorrect placement can permanently damage the door or reduce visibility. Professional installation ensures the peephole is centered correctly, sealed properly, and aligned for clear viewing.</</p>
+<div class="callout" role="note" aria-label="Typical cost range">
+  <div class="callout-title">
+    <span class="badge">Typical range</span>
+    <span>$150–$450 for one nest</span>
   </div>
+  <p>
+    In San Diego, CA, most pricing comes down to access and where the nest is located.
+    If you want a fast, no-pressure estimate, use the “Get Free Estimate” button above.
+  </p>
+</div>
+<hr />
+<h2>Wasp Nest Removal Cost</h2>
+<p class="muted">
+  Typical installed range for one nest often falls around $150–$450. Access and nest location drive most pricing.
+  See the <a href="/cost/">cost page</a> for details.
+</p>
+
+  </section>
 </main>
 
 <footer>
-  <div class="footer-card">
+  <div class="footer-inner">
     <h2>Next steps</h2>
-    <p>Ready to move forward? Request a free quote</p>
-    <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
-    <div class="small">
-      © Peephole Installation Company. All rights reserved.
-      <div class="links" style="margin-top:10px;">
-        <a href="/">Home</a>
-      </div>
+    <p class="sub">Ready to move forward? Request a free quote.</p>
+    <div>
+      <a class="btn" href="mailto:hello@example.com?subject=Free%20Quote%20Request">Get Free Estimate</a>
     </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/cost/">Cost</a>
+      <a href="/how-to/">How-To</a>
+    </div>
+    <div class="small">© Peephole Installation Company. All rights reserved.</div>
   </div>
 </footer>
 </body>

@@ -7,16 +7,17 @@ Cloudflare Pages:
 - Output directory: public
 
 URL structure:
-- /<city>-<state>/  e.g. /los-angeles-ca/
+- /<city>-<state>/   e.g. /los-angeles-ca/
+- /cost/
+- /how-to/
 
 SEO rules enforced:
 - Exactly one H1 per page
 - <title> == H1
 - Title <= 70 characters
-- Controlled H2 set (city pages only use headings from H2_HEADINGS)
-- Avoid over-repeating city name in body copy
-- Cost section near the bottom
-- Natural CTA at the bottom (exact text required)
+- Main + City pages use the exact same H2 set (Ahrefs-driven)
+- Cost and How-To use distinct H2 sets (no reused headings across them)
+- Pure CSS, barebones, fast
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import html
 import re
+import shutil
 
 
 # -----------------------
@@ -32,32 +34,17 @@ import re
 # -----------------------
 @dataclass(frozen=True)
 class SiteConfig:
-    # Ahrefs-driven phrasing: primary keyword + closest parent-topic variant.
-    # Keep homepage H1 non-location and <= 70 chars via clamp_title().
-    service_name: str = "Peephole/Door Viewer Installation Services"
+    service_name: str = "Wasp Nest/Wasp Hive Removal & Wasp Control Services"
     brand_name: str = "Peephole Installation Company"
     cta_text: str = "Get Free Estimate"
     cta_href: str = "mailto:hello@example.com?subject=Free%20Quote%20Request"
     output_dir: Path = Path("public")
-    cost_low: int = 110
-    cost_high: int = 220
+    image_filename: str = "picture.png"  # sits next to generate.py
+    cost_low: int = 150
+    cost_high: int = 450
 
 
 CONFIG = SiteConfig()
-
-# Controlled H2 set (city pages ONLY pull headings from this list)
-# Built from Ahrefs themes: peephole height, adding peephole to door, door hole, cost.
-H2_HEADINGS = [
-    "Peephole vs Door Viewer",
-    "Can You Add a Peephole to an Existing Door?",
-    "What Height Should a Peephole Be?",
-    "What Size Hole Does a Peephole Need?",
-    "DIY vs Pro: When to Hire Help",
-    "Replacing an Old Peephole",
-    "How Long Installation Takes",
-    "Peephole Installation Cost",
-    "Service Area",
-]
 
 CITIES: list[tuple[str, str]] = [
     ("Los Angeles", "CA"),
@@ -82,9 +69,111 @@ CITIES: list[tuple[str, str]] = [
     ("Washington", "DC"),
 ]
 
-# Prefer local images so it always works on Cloudflare Pages.
-LOCAL_IMAGE_CITY = "/assets/door-viewer.jpg"
-LOCAL_IMAGE_HOME = "/assets/front-door.jpg"
+H1_TITLE = "Exterior Door Viewer/Eyehole/Peephole Installation Services"
+
+
+# =========================
+# MAIN PAGE (H2_SHARED)
+# =========================
+
+H2_SHARED = [
+    "What Is a Peephole in a Door?",
+    "What Is Peephole Installation?",
+    "How Do Peepholes Work?",
+    "Best Height for a Door Peephole",
+    "Types of Door Peepholes and Viewers",
+    "Professional Peephole Installation vs DIY",
+    "When to Hire a Peephole Installation Professional",
+]
+
+P_SHARED = [
+    "A peephole, also known as a door viewer or door eye, is a small optical device installed in an exterior door that allows someone inside to see who is outside before opening the door. Peepholes are commonly used on entry doors to improve personal safety and visibility.",
+
+    "Peephole installation is the process of drilling a precise hole through a door and securely installing a door viewer. Proper installation ensures a clear viewing angle, correct placement, and a clean finish without damaging the door.",
+
+    "Peepholes work using a wide-angle lens that allows a person inside to see a broad area outside the door. This design makes it possible to identify visitors, deliveries, or unexpected guests without opening the door.",
+
+    "The standard peephole height is typically between 58 and 62 inches from the floor. This range provides a comfortable viewing angle for most adults. In some homes, alternative heights or wide-angle viewers are used to accommodate children, wheelchair users, or multiple occupants.",
+
+    "There are several types of door peepholes available, including standard optical peepholes, wide-angle viewers, privacy-enhanced models, and digital door viewers. The best option depends on door thickness, desired viewing angle, and security needs.",
+
+    "DIY peephole installation may seem simple, but improper drilling or incorrect placement can permanently damage the door or reduce visibility. Professional installation ensures the peephole is centered correctly, sealed properly, and aligned for clear viewing.",
+
+    "Hiring a professional is recommended when installing a peephole in a metal or reinforced door, when precise placement is important, or when avoiding damage to the door is a priority."
+]
+
+
+# =========================
+# HOW-TO PAGE (H2_HOWTO)
+# =========================
+
+H2_HOWTO = [
+    "Can You Install a Peephole Yourself?",
+    "How to Install a Peephole in a Door",
+    "How to Add a Peephole to a Front Door",
+    "Installing a Peephole in a Metal Door",
+    "Tools Needed for Peephole Installation",
+    "Common Peephole Installation Mistakes",
+    "When DIY Peephole Installation Is Not Recommended",
+]
+
+P_HOWTO = [
+    "Some homeowners can install a basic peephole themselves using the correct tools and careful measurements. However, drilling mistakes can damage the door or result in poor visibility. For many people, professional {peephole installation services} provide a safer and more precise solution.",
+
+    "Installing a peephole involves measuring the correct height, drilling a clean hole through the door, inserting the interior and exterior viewer components, and tightening them securely. Precision is essential to ensure proper alignment and functionality.",
+
+    "Adding a peephole to a front door follows the same general process as standard installation, but extra care is needed to avoid damaging decorative panels, finishes, or internal door components.",
+
+    "Installing a peephole in a metal door requires slow, controlled drilling and the correct drill bit. Incorrect techniques can damage the door’s finish or compromise its internal structure.",
+
+    "Common tools for peephole installation include a drill, properly sized drill bit or hole saw, measuring tape, pencil, and screwdriver. Using the wrong tools increases the risk of door damage.",
+
+    "Common DIY mistakes include drilling at the wrong height, using an incorrect drill bit size, overtightening the viewer, or misaligning the lens. These issues often lead to poor visibility or require professional correction.",
+
+    "DIY installation is not recommended for metal doors, fire-rated doors, or rental properties with restrictions. In these cases, contacting a provider that offers {peephole installation services} is the safest option."
+]
+
+
+# =========================
+# COST PAGE (H2_COST)
+# =========================
+
+H2_COST = [
+    "How Much Does Peephole Installation Cost?",
+    "What Affects the Cost of Peephole Installation?",
+    "Peephole Installation Cost vs DIY",
+    "Cost to Install a Peephole in a Metal Door",
+    "Are Peepholes Allowed in Rental Doors?",
+    "When Professional Peephole Installation Is Worth the Cost",
+]
+
+P_COST = [
+    "Professional peephole installation typically costs between $75 and $200, depending on the door type and the viewer selected. Many homeowners compare DIY options against professional {peephole installation services} before making a decision.",
+
+    "Several factors affect the cost of peephole installation, including door material, door thickness, type of viewer, labor time, and whether the door is metal or reinforced.",
+
+    "DIY installation may appear cheaper, but mistakes can lead to damaged doors, misaligned viewers, or the need for replacement hardware. Professional installation reduces the risk of costly errors.",
+
+    "Installing a peephole in a metal door often costs more due to the need for specialized tools and careful drilling techniques.",
+
+    "Rental policies vary, but many landlords allow peepholes as a security feature if installed properly. In some cases, professional installation is required to comply with lease or building rules.",
+
+    "Professional installation is worth the cost when precision matters, the door material is difficult to work with, or long-term durability is important. In these cases, professional {peephole installation services} provide reliable results and peace of mind."
+]
+
+"""
+ALSO_MENTIONED = [
+    "pest control",
+    "spray",
+    "spray bottle",
+    "dish soap",
+    "wasp stings",
+    "price",
+    "removal",
+    "nest",
+    "wasp",
+]
+"""
 
 
 # -----------------------
@@ -112,254 +201,277 @@ def clamp_title(title: str, max_chars: int = 70) -> str:
     return title[: max_chars - 1].rstrip() + "…"
 
 
-def make_city_h1(service: str, city: str, state: str) -> str:
+def city_h1(service: str, city: str, state: str) -> str:
     return clamp_title(f"{service} in {city}, {state}", 70)
 
 
-def toolbar_html() -> str:
-    return f"""
-<div class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="/">{esc(CONFIG.brand_name)}</a>
-    <div class="topbar-actions">
-      <a class="toplink" href="/">Home</a>
-      <a class="btn btn-top" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
-    </div>
-  </div>
-</div>
-""".rstrip()
+def write_text(out_path: Path, content: str) -> None:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(content, encoding="utf-8")
 
 
+def reset_output_dir(p: Path) -> None:
+    if p.exists():
+        shutil.rmtree(p)
+    p.mkdir(parents=True, exist_ok=True)
+
+
+def copy_site_image(*, src_dir: Path, out_dir: Path, filename: str) -> None:
+    src = src_dir / filename
+    if not src.exists():
+        raise FileNotFoundError(f"Missing image next to generate.py: {src}")
+    shutil.copyfile(src, out_dir / filename)
+
+
+# -----------------------
+# THEME (pure CSS, minimal, fast)
+# Home-services vibe: warmer neutrals + trustworthy green CTA.
+# -----------------------
 CSS = """
-:root {
-  --bg: #0b1b33;
-  --bg2: #102a4d;
-  --text: #0f172a;
-  --muted: #475569;
-  --card: #ffffff;
-  --line: #e2e8f0;
-  --cta: #f97316;
-  --cta-hover: #ea580c;
-  --max: 980px;
-  --radius: 14px;
+:root{
+  --bg:#fafaf9;
+  --surface:#ffffff;
+  --ink:#111827;
+  --muted:#4b5563;
+  --line:#e7e5e4;
+  --soft:#f5f5f4;
+
+  --cta:#16a34a;
+  --cta2:#15803d;
+
+  --max:980px;
+  --radius:16px;
+  --shadow:0 10px 30px rgba(17,24,39,0.06);
+  --shadow2:0 10px 24px rgba(17,24,39,0.08);
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{
+  margin:0;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.6;
+}
+a{color:inherit}
+a:focus{outline:2px solid var(--cta); outline-offset:2px}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(250,250,249,0.92);
+  backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.brand{
+  font-weight:900;
+  letter-spacing:-0.02em;
+  text-decoration:none;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.nav a{
+  text-decoration:none;
+  font-size:13px;
+  color:var(--muted);
+  padding:7px 10px;
+  border-radius:12px;
+  border:1px solid transparent;
+}
+.nav a:hover{
+  background:var(--soft);
+  border-color:var(--line);
+}
+.nav a[aria-current="page"]{
+  color:var(--ink);
+  background:var(--soft);
+  border:1px solid var(--line);
 }
 
-* { box-sizing: border-box; }
+.btn{
+  display:inline-block;
+  padding:9px 12px;
+  background:var(--cta);
+  color:#fff;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:900;
+  font-size:13px;
+  border:1px solid rgba(0,0,0,0.04);
+  box-shadow:0 8px 18px rgba(22,163,74,0.18);
+}
+.btn:hover{background:var(--cta2)}
+.btn:focus{outline:2px solid var(--cta2); outline-offset:2px}
 
-body {
-  margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  color: var(--text);
-  background: #f8fafc;
-  line-height: 1.55;
-  padding-top: 58px; /* room for fixed toolbar */
+/* IMPORTANT: nav links apply grey text; ensure CTA stays white in the toolbar */
+.nav a.btn{
+  color:#fff;
+  background:var(--cta);
+  border-color:rgba(0,0,0,0.04);
+}
+.nav a.btn:hover{background:var(--cta2)}
+.nav a.btn:focus{outline:2px solid var(--cta2); outline-offset:2px}
+
+header{
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(1200px 380px at 10% -20%, rgba(22,163,74,0.08), transparent 55%),
+    radial-gradient(900px 320px at 95% -25%, rgba(17,24,39,0.06), transparent 50%),
+    #fbfbfa;
+}
+.hero{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:34px 18px 24px;
+  display:grid;
+  gap:10px;
+  text-align:left;
+}
+.hero h1{
+  margin:0;
+  font-size:30px;
+  letter-spacing:-0.03em;
+  line-height:1.18;
+}
+.sub{margin:0; color:var(--muted); max-width:78ch; font-size:14px}
+
+main{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:22px 18px 46px;
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.img{
+  margin-top:14px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--soft);
+  box-shadow:var(--shadow2);
+}
+.img img{display:block; width:100%; height:auto}
+
+h2{
+  margin:18px 0 8px;
+  font-size:16px;
+  letter-spacing:-0.01em;
+}
+p{margin:0 0 10px}
+.muted{color:var(--muted); font-size:13px}
+hr{border:0; border-top:1px solid var(--line); margin:18px 0}
+
+.city-grid{
+  list-style:none;
+  padding:0;
+  margin:10px 0 0;
+  display:grid;
+  gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+}
+.city-grid a{
+  display:block;
+  text-decoration:none;
+  color:var(--ink);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 12px;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:0 10px 24px rgba(17,24,39,0.05);
+}
+.city-grid a:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px rgba(17,24,39,0.08);
 }
 
-/* Fixed top toolbar (all pages) */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 58px;
-  background: rgba(255,255,255,0.98);
-  border-bottom: 1px solid var(--line);
-  z-index: 999;
-  backdrop-filter: blur(8px);
+.callout{
+  margin:16px 0 12px;
+  padding:14px 14px;
+  border-radius:14px;
+  border:1px solid rgba(22,163,74,0.22);
+  background:linear-gradient(180deg, rgba(22,163,74,0.08), rgba(22,163,74,0.03));
 }
-
-.topbar-inner {
-  max-width: var(--max);
-  margin: 0 auto;
-  height: 100%;
-  padding: 0 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.callout-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  letter-spacing:-0.01em;
+  margin:0 0 6px;
 }
-
-.brand {
-  font-weight: 800;
-  text-decoration: none;
-  color: #0b1b33;
-  letter-spacing: -0.01em;
+.badge{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  background:rgba(22,163,74,0.14);
+  border:1px solid rgba(22,163,74,0.22);
+  color:var(--ink);
+  font-size:12px;
+  font-weight:900;
 }
+.callout p{margin:0; color:var(--muted); font-size:13px}
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+footer{
+  border-top:1px solid var(--line);
+  background:#fbfbfa;
 }
-
-.toplink {
-  text-decoration: none;
-  color: #0f172a;
-  font-size: 13px;
+.footer-inner{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:28px 18px;
+  display:grid;
+  gap:10px;
+  text-align:left;
 }
-
-header {
-  background: linear-gradient(135deg, var(--bg), var(--bg2));
-  color: white;
-  padding: 44px 18px 34px;
-}
-
-.wrap { max-width: var(--max); margin: 0 auto; }
-
-.hero {
-  display: grid;
-  gap: 14px;
-  justify-items: center;
-  text-align: center;
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: 26px;
-  letter-spacing: -0.01em;
-}
-
-.sub {
-  margin: 0;
-  color: rgba(255,255,255,0.86);
-  max-width: 68ch;
-  font-size: 14px;
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 14px;
-  background: var(--cta);
-  color: white;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 800;
-  font-size: 13px;
-  border: 0;
-}
-
-.btn:hover { background: var(--cta-hover); }
-
-.btn-top { padding: 9px 12px; }
-
-main { padding: 24px 18px 42px; }
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.05);
-}
-
-.grid { display: grid; gap: 16px; }
-
-.img {
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-}
-
-.img img { display: block; width: 100%; height: auto; }
-
-h2 {
-  font-size: 16px;
-  margin: 18px 0 8px;
-  letter-spacing: -0.01em;
-}
-
-p { margin: 0 0 10px; color: var(--text); }
-ul { margin: 10px 0 14px 18px; color: var(--text); }
-li { margin: 6px 0; }
-
-hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
-
-.muted { color: var(--muted); font-size: 13px; }
-
-footer {
-  background: linear-gradient(135deg, var(--bg), var(--bg2));
-  color: rgba(255,255,255,0.9);
-  padding: 34px 18px;
-}
-
-.footer-card { max-width: var(--max); margin: 0 auto; text-align: center; }
-
-.footer-card h2 { color: white; margin: 0 0 10px; font-size: 18px; }
-
-.footer-card p { color: rgba(255,255,255,0.85); }
-
-.small { margin-top: 18px; font-size: 12px; color: rgba(255,255,255,0.7); }
-
-.links a {
-  color: rgba(255,255,255,0.9);
-  text-decoration: underline;
-  margin: 0 10px;
-  font-size: 13px;
-}
-
-.pill {
-  display: inline-block;
-  padding: 4px 10px;
-  background: #eef2ff;
-  border: 1px solid #e0e7ff;
-  color: #1e3a8a;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.table th, .table td {
-  text-align: left;
-  padding: 10px 10px;
-  border-top: 1px solid var(--line);
-  vertical-align: top;
-}
-
-.table th {
-  color: #0f172a;
-  background: #f1f5f9;
-  border-top: 1px solid var(--line);
-}
-
-/* Clean city buttons (simple, uncluttered) */
-.city-grid {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.city-grid a {
-  display: block;
-  text-decoration: none;
-  color: #0f172a;
-  background: #ffffff;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.city-grid a:hover {
-  border-color: #cbd5e1;
-}
+.footer-inner h2{margin:0; font-size:18px}
+.footer-links{display:flex; gap:12px; flex-wrap:wrap}
+.footer-links a{color:var(--muted); text-decoration:none; font-size:13px; padding:6px 0}
+.small{color:var(--muted); font-size:12px; margin-top:8px}
 """.strip()
 
 
 # -----------------------
-# HTML SHELL
+# HTML BUILDING BLOCKS
 # -----------------------
-def base_html(*, title: str, canonical_path: str, description: str, body_inner: str) -> str:
+def nav_html(current: str) -> str:
+    def item(href: str, label: str, key: str) -> str:
+        cur = ' aria-current="page"' if current == key else ""
+        return f'<a href="{esc(href)}"{cur}>{esc(label)}</a>'
+
+    return (
+        '<nav class="nav" aria-label="Primary navigation">'
+        + item("/", "Home", "home")
+        + item("/cost/", "Cost", "cost")
+        + item("/how-to/", "How-To", "howto")
+        + f'<a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>'
+        + "</nav>"
+    )
+
+
+def base_html(*, title: str, canonical_path: str, description: str, current_nav: str, body: str) -> str:
+    # title == h1 is enforced by callers; keep this thin.
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -373,248 +485,298 @@ def base_html(*, title: str, canonical_path: str, description: str, body_inner: 
   </style>
 </head>
 <body>
-{toolbar_html()}
-{body_inner}
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">{esc(CONFIG.brand_name)}</a>
+      {nav_html(current_nav)}
+    </div>
+  </div>
+{body}
 </body>
 </html>
 """
 
 
-# -----------------------
-# CONTENT (shared)
-# -----------------------
-def shared_sections_html(*, city: str | None = None, state: str | None = None) -> str:
-    # Keep city mentions light to avoid repetition.
-    local_line = ""
-    if city and state:
-        local_line = f' <span class="muted">Serving {esc(city)}, {esc(state)}.</span>'
-
+def header_block(*, h1: str, sub: str) -> str:
     return f"""
-<h2>{esc(H2_HEADINGS[0])}</h2>
-<p>
-  “Peephole” and “door viewer” often mean the same thing: a small lens set through the door.
-  It lets you see who is outside before you open.{local_line}
-</p>
-
-<h2>{esc(H2_HEADINGS[1])}</h2>
-<p>
-  Yes. We can install a peephole on most wood and metal doors, as long as there is a clear spot for the hole.
-  We also match the viewer to the door thickness so it tightens correctly.
-</p>
-
-<h2>{esc(H2_HEADINGS[2])}</h2>
-<p>
-  Set it at eye level for the main user. Many installs land around 58–60 inches from the finished floor.
-  If more than one person uses the door, a middle height usually works best.
-</p>
-
-<h2>{esc(H2_HEADINGS[3])}</h2>
-<p>
-  Most standard viewers use a drilled hole through the door. The exact size depends on the hardware.
-  If there is an old hole, we can often reuse it or resize it for a snug fit.
-</p>
-
-<h2>{esc(H2_HEADINGS[4])}</h2>
-<p>
-  DIY can work on a simple door if you have the right tools and measure carefully.
-  A pro helps prevent splintering, a crooked hole, or loose hardware—especially on metal or finished doors.
-</p>
-
-<h2>{esc(H2_HEADINGS[5])}</h2>
-<p>
-  Replace a peephole when the lens looks cloudy, the tube spins, or the view feels too narrow.
-  If the old hole is worn, we tell you what size will cover it cleanly.
-</p>
-
-<h2>{esc(H2_HEADINGS[6])}</h2>
-<p>
-  Many installs finish in one visit. Extra time may be needed if old hardware is stuck,
-  the hole needs patching, or the door material is hard to drill.
-</p>
+<header>
+  <div class="hero">
+    <h1>{esc(h1)}</h1>
+  </div>
+</header>
 """.rstrip()
 
 
-# -----------------------
-# PAGES
-# -----------------------
-def city_page(*, city: str, state: str) -> str:
-    h1 = make_city_h1(CONFIG.service_name, city, state)
-    title = h1  # EXACT match per rule
-
-    description = clamp_title(
-        f"{CONFIG.service_name} basics, install steps, and typical pricing for {city}, {state}.",
-        155,
-    )
-
-    canonical = f"/{city_state_slug(city, state)}/"
-
-    body_inner = f"""
-<header>
-  <div class="wrap hero">
-    <h1>{esc(h1)}</h1>
-    <p class="sub">
-      Straight answers on what gets installed, where it goes, and what affects the price.
-    </p>
-    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="grid">
-    <section class="card">
-      <div class="pill">Local install guide</div>
-
-      <div class="img" style="margin-top:12px;">
-        <img src="{esc(LOCAL_IMAGE_CITY)}" alt="Door viewer installed in a front door" loading="lazy" />
-      </div>
-
-      {shared_sections_html(city=city, state=state)}
-
-      <hr />
-
-      <h2>{esc(H2_HEADINGS[7])}</h2>
-      <p class="muted">
-        Estimated installed cost in {esc(city)}, {esc(state)} (many projects):
-      </p>
-
-      <table class="table" aria-label="Cost estimate table">
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Typical range</th>
-            <th>What moves the price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{esc(CONFIG.service_name)}</td>
-            <td>${CONFIG.cost_low}–${CONFIG.cost_high}</td>
-            <td>Door material, thickness, hole repair/resizing, viewer quality</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="muted" style="margin-top:10px;">
-        Final pricing depends on the door, the hardware size, and any repair work around the hole.
-      </p>
-
-      <hr />
-
-      <h2>{esc(H2_HEADINGS[8])}</h2>
-      <p>
-        We schedule work across the metro area. If you are nearby, request a quote and we will confirm fit and timing.
-      </p>
-    </section>
-  </div>
-</main>
-
+def footer_block() -> str:
+    return f"""
 <footer>
-  <div class="footer-card">
+  <div class="footer-inner">
     <h2>Next steps</h2>
-    <p>Ready to move forward? Request a free quote</p>
-    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
-    <div class="small">
-      © {esc(CONFIG.brand_name)}. All rights reserved.
-      <div class="links" style="margin-top:10px;">
-        <a href="/">Home</a>
-      </div>
+    <p class="sub">Ready to move forward? Request a free quote.</p>
+    <div>
+      <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
     </div>
-  </div>
-</footer>
-""".rstrip()
-
-    return base_html(title=title, canonical_path=canonical, description=description, body_inner=body_inner)
-
-
-def homepage(*, cities: list[tuple[str, str]]) -> str:
-    # Non-location H1 (per requirement). Keep it short and human.
-    h1 = clamp_title(CONFIG.service_name, 70)
-    title = h1  # EXACT match
-
-    description = clamp_title(
-        "Simple guide to peephole and door viewer installation, placement height, and typical costs.",
-        155,
-    )
-
-    city_links = "\n".join(
-        f'<li><a href="{esc("/" + city_state_slug(city, state) + "/")}">{esc(city)}, {esc(state)}</a></li>'
-        for city, state in cities
-    )
-
-    body_inner = f"""
-<header>
-  <div class="wrap hero">
-    <h1>{esc(h1)}</h1>
-    <p class="sub">
-      Add a clear view to your entry door. Learn what gets installed, where it goes, and what the work tends to cost.
-    </p>
-    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
-  </div>
-</header>
-
-<main class="wrap">
-  <section class="card">
-    <div class="pill">Straight answers</div>
-
-    <div class="img" style="margin-top:12px;">
-      <img src="{esc(LOCAL_IMAGE_HOME)}" alt="Front door and hardware" loading="lazy" />
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/cost/">Cost</a>
+      <a href="/how-to/">How-To</a>
     </div>
-
-    {shared_sections_html()}
-
-    <hr />
-
-    <h2>{esc(H2_HEADINGS[7])}</h2>
-    <p class="muted">
-      Many installs fall in the ${CONFIG.cost_low}–${CONFIG.cost_high} range. Door material and hole repair can change that.
-    </p>
-
-    <hr />
-
-    <h2>Choose your city</h2>
-    <p class="muted">Select a location for a page with local pricing context and the same full guide.</p>
-
-    <!-- Clean city buttons (grid) -->
-    <ul class="city-grid">
-      {city_links}
-    </ul>
-  </section>
-</main>
-
-<footer>
-  <div class="footer-card">
-    <h2>Next steps</h2>
-    <p>Ready to move forward? Request a free quote</p>
-    <a class="btn" href="{esc(CONFIG.cta_href)}">{esc(CONFIG.cta_text)}</a>
     <div class="small">© {esc(CONFIG.brand_name)}. All rights reserved.</div>
   </div>
 </footer>
 """.rstrip()
 
-    return base_html(title=title, canonical_path="/", description=description, body_inner=body_inner)
+
+def page_shell(*, h1: str, sub: str, inner_html: str) -> str:
+    # Single image used everywhere. Since we copy picture.png into /public/,
+    # it can be referenced as "/picture.png" from any route.
+    img_src = f"/{CONFIG.image_filename}"
+    return (
+        header_block(h1=h1, sub=sub)
+        + f"""
+<main>
+  <section class="card">
+    <div class="img">
+      <img src="{esc(img_src)}" alt="Service image" loading="lazy" />
+    </div>
+    {inner_html}
+  </section>
+</main>
+"""
+        + footer_block()
+    ).rstrip()
 
 
 # -----------------------
-# GENERATION
+# CONTENT SECTIONS
 # -----------------------
-def write_file(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+def shared_sections_html(*, local_line: str | None = None) -> str:
+    local = f' <span class="muted">{esc(local_line)}</span>' if local_line else ""
+    return f"""
+<h2>{esc(H2_SHARED[0])}</h2>
+<p>{esc(P_SHARED[0])}</</p>
+
+<h2>{esc(H2_SHARED[1])}</h2>
+<p>{esc(P_SHARED[1])}</</p>
+
+<h2>{esc(H2_SHARED[2])}</h2>
+<p>{esc(P_SHARED[2])}</</p>
+
+<h2>{esc(H2_SHARED[3])}</h2>
+<p>{esc(P_SHARED[3])}</</p>
+
+<h2>{esc(H2_SHARED[4])}</h2>
+<p>{esc(P_SHARED[4])}</</p>
+
+<h2>{esc(H2_SHARED[5])}</h2>
+<p>{esc(P_SHARED[5])}</</p>
+""".rstrip()
 
 
+def cost_sections_html() -> str:
+    return f"""
+<h2>{esc(H2_COST[0])}</h2>
+<p>{esc(P_COST[0])}</p>
+
+<h2>{esc(H2_COST[1])}</h2>
+<p>{esc(P_COST[1])}</p>
+
+<h2>{esc(H2_COST[2])}</h2>
+<p>{esc(P_COST[2])}</p>
+
+<h2>{esc(H2_COST[3])}</h2>
+<p>{esc(P_COST[3])}</p>
+
+<h2>{esc(H2_COST[4])}</h2>
+<p>{esc(P_COST[4])}</p>
+
+<h2>{esc(H2_COST[5])}</h2>
+<p>{esc(P_COST[5])}</p>
+
+<hr />
+
+<p class="muted">
+  Typical installed range (single nest, many homes): ${CONFIG.cost_low}–${CONFIG.cost_high}. Final pricing depends on access, nest location, and time on site.
+</p>
+""".rstrip()
+
+
+def howto_sections_html() -> str:
+    return f"""
+<h2>{esc(H2_HOWTO[0])}</h2>
+<p>{esc(P_HOWTO[0])}</p>
+
+<h2>{esc(H2_HOWTO[1])}</h2>
+<p>{esc(P_HOWTO[1])}</p>
+
+<h2>{esc(H2_HOWTO[2])}</h2>
+<p>{esc(P_HOWTO[2])}</p>
+
+<h2>{esc(H2_HOWTO[3])}</h2>
+<p>{esc(P_HOWTO[3])}</p>
+
+<h2>{esc(H2_HOWTO[4])}</h2>
+<p>{esc(P_HOWTO[4])}</p>
+
+<h2>{esc(H2_HOWTO[5])}</h2>
+<p>{esc(P_HOWTO[5])}</p>
+""".rstrip()
+
+
+def city_cost_callout_html(city: str, state: str) -> str:
+    # Subtle, high-impact conversion element for city pages.
+    return f"""
+<div class="callout" role="note" aria-label="Typical cost range">
+  <div class="callout-title">
+    <span class="badge">Typical range</span>
+    <span>${CONFIG.cost_low}–${CONFIG.cost_high} for one nest</span>
+  </div>
+  <p>
+    In {esc(city)}, {esc(state)}, most pricing comes down to access and where the nest is located.
+    If you want a fast, no-pressure estimate, use the “{esc(CONFIG.cta_text)}” button above.
+  </p>
+</div>
+""".rstrip()
+
+
+# -----------------------
+# PAGE FACTORY
+# -----------------------
+def make_page(*, h1: str, canonical: str, description: str, nav_key: str, sub: str, inner: str) -> str:
+    h1 = clamp_title(h1, 70)
+    title = h1  # enforce title == h1
+    return base_html(
+        title=title,
+        canonical_path=canonical,
+        description=clamp_title(description, 155),
+        current_nav=nav_key,
+        body=page_shell(h1=h1, sub=sub, inner_html=inner),
+    )
+
+
+def homepage_html() -> str:
+    h1 = H1_TITLE
+    city_links = "\n".join(
+        f'<li><a href="{esc("/" + city_state_slug(city, state) + "/")}">{esc(city)}, {esc(state)}</a></li>'
+        for city, state in CITIES
+    )
+    inner = (
+        shared_sections_html()
+        + """
+<hr />
+<h2>Choose your city</h2>
+<p class="muted">Select a city page for the same guide with a light local line.</p>
+<ul class="city-grid">
+"""
+        + city_links
+        + """
+</ul>
+<hr />
+<p class="muted">
+  Also available: <a href="/cost/">Wasp Nest Removal Cost</a> and <a href="/how-to/">How to Get Rid of Wasp Nest</a>.
+</p>
+"""
+    )
+
+    return make_page(
+        h1=h1,
+        canonical="/",
+        description="Straight answers on wasp nest removal and wasp control.",
+        nav_key="home",
+        sub="How removal works, what prevents repeat activity, and when to call help.",
+        inner=inner,
+    )
+
+
+def city_page_html(city: str, state: str) -> str:
+    inner = (
+        shared_sections_html(local_line=f"Serving {city}, {state}.")
+        + city_cost_callout_html(city, state)
+        + f"""
+<hr />
+<h2>Wasp Nest Removal Cost</h2>
+<p class="muted">
+  Typical installed range for one nest often falls around ${CONFIG.cost_low}–${CONFIG.cost_high}. Access and nest location drive most pricing.
+  See the <a href="/cost/">cost page</a> for details.
+</p>
+"""
+    )
+
+    return make_page(
+        h1=city_h1(H1_TITLE, city, state),
+        canonical=f"/{city_state_slug(city, state)}/",
+        description=f"Wasp nest removal and wasp control guide with local context for {city}, {state}.",
+        nav_key="home",
+        sub="Same core guide, plus a quick local note and a typical cost range.",
+        inner=inner,
+    )
+
+
+def cost_page_html() -> str:
+    return make_page(
+        h1="Wasp Nest Removal Cost",
+        canonical="/cost/",
+        description="Typical wasp nest removal cost ranges and what changes pricing.",
+        nav_key="cost",
+        sub="Simple ranges and the factors that usually move the price.",
+        inner=cost_sections_html(),
+    )
+
+
+def howto_page_html() -> str:
+    return make_page(
+        h1="How to Get Rid of Wasp Nests",
+        canonical="/how-to/",
+        description="Clear steps for dealing with a wasp nest without making it worse.",
+        nav_key="howto",
+        sub="A practical guide that prioritizes safety and reduces repeat activity.",
+        inner=howto_sections_html(),
+    )
+
+
+# -----------------------
+# ROBOTS + SITEMAP
+# -----------------------
+def robots_txt() -> str:
+    return "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n"
+
+
+def sitemap_xml(urls: list[str]) -> str:
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls)
+        + "</urlset>\n"
+    )
+
+
+# -----------------------
+# MAIN
+# -----------------------
 def main() -> None:
-    CONFIG.output_dir.mkdir(parents=True, exist_ok=True)
+    script_dir = Path(__file__).resolve().parent
+    out = CONFIG.output_dir
 
-    # Homepage
-    write_file(CONFIG.output_dir / "index.html", homepage(cities=CITIES))
+    reset_output_dir(out)
+
+    # Copy the single shared image into /public/ so all pages can reference "/picture.png".
+    copy_site_image(src_dir=script_dir, out_dir=out, filename=CONFIG.image_filename)
+
+    # Core pages
+    write_text(out / "index.html", homepage_html())
+    write_text(out / "cost" / "index.html", cost_page_html())
+    write_text(out / "how-to" / "index.html", howto_page_html())
 
     # City pages
     for city, state in CITIES:
-        slug = city_state_slug(city, state)
-        out = CONFIG.output_dir / slug / "index.html"
-        write_file(out, city_page(city=city, state=state))
+        write_text(out / city_state_slug(city, state) / "index.html", city_page_html(city, state))
 
-    print(f"✅ Generated {1 + len(CITIES)} pages into: {CONFIG.output_dir.resolve()}")
+    # robots + sitemap
+    urls = ["/", "/cost/", "/how-to/"] + [f"/{city_state_slug(c, s)}/" for c, s in CITIES]
+    write_text(out / "robots.txt", robots_txt())
+    write_text(out / "sitemap.xml", sitemap_xml(urls))
+
+    print(f"✅ Generated {len(urls)} pages into: {out.resolve()}")
 
 
 if __name__ == "__main__":
