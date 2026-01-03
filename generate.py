@@ -1056,7 +1056,7 @@ def city_page_html(city: str, state: str) -> str:
 
 def cost_page_html() -> str:
     return make_page(
-        h1="Wasp Nest Removal Cost",
+        h1=COST_TITLE,
         canonical="/cost/",
         description="Typical wasp nest removal cost ranges and what changes pricing.",
         nav_key="cost",
@@ -1067,7 +1067,7 @@ def cost_page_html() -> str:
 
 def howto_page_html() -> str:
     return make_page(
-        h1="How to Get Rid of Wasp Nests",
+        h1=HOWTO_TITLE,
         canonical="/how-to/",
         description="Clear steps for dealing with a wasp nest without making it worse.",
         nav_key="howto",
