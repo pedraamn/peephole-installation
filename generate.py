@@ -118,8 +118,8 @@ class SiteConfig:
   cta_href: str = "/contact/"
 
   # Pricing base
-  cost_low: int = 500
-  cost_high: int = 1500
+  cost_low: int = 50
+  cost_high: int = 250
 
   # Core titles/subs
   h1_title: str = "Peephole/Eyehole/Door Viewer Installation Services"
