@@ -133,10 +133,11 @@ class SiteConfig:
   howto_sub: str = "A practical overview of how professional theater cleaning works and how services are scheduled."
 
   about_blurb: str = (
-    "We provide professional theater cleaning services{loc} for movie theaters, cinemas, and auditoriums. "
-    "Our cleaning focuses on seating, carpets, restrooms, and concession areas to maintain sanitation and a positive guest experience. "
-    "Get reliable service from a trusted local theater cleaning professional."
+    "We provide professional peephole installation services{loc} for front and entry doors. "
+    "Our service ensures proper placement, clean installation, and improved door visibility for added security. "
+    "Get a fast quote and professional service from a trusted local peephole installation expert."
   )
+
 
 
   # Content (minimal placeholders; keep your real text here)
