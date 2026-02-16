@@ -107,11 +107,11 @@ class SiteConfig:
 
   # Build / assets
   output_dir: Path = Path("public")
-  image_filename: str = "theater-cleaning-expert-cleaning-upholstery.webp"  # sits next to generate.py
+  image_filename: str = "man-installing-peephole.webp"  # sits next to generate.py
 
   # Identity
-  base_name: str = "Theater Cleaning"
-  brand_name: str = "Theater Cleaning Experts"
+  base_name: str = "Peephole Installation"
+  brand_name: str = "Peephole Installation Specialists"
 
   # CTA
   cta_text: str = "Get Free Estimate"
@@ -122,14 +122,14 @@ class SiteConfig:
   cost_high: int = 1500
 
   # Core titles/subs
-  h1_title: str = "Theater/Movie Theater and Cinema Cleaning Services"
-  h1_short: str = "Theater Cleaning Services"
+  h1_title: str = "Peephole/Eyehole/Door Viewer Installation Services"
+  h1_short: str = "Peephole Installation Services"
   h1_sub: str = "Professional cleaning for theaters that keeps seating, floors, and common areas clean and guest-ready."
 
-  cost_title: str = "Theater Cleaning Cost"
+  cost_title: str = "Peephole Installation Cost"
   cost_sub: str = "Typical pricing ranges, cleaning scope examples, and factors that affect overall service costs."
 
-  howto_title: str = "How Theater Cleaning Is Done"
+  howto_title: str = "How to Install a Peephole"
   howto_sub: str = "A practical overview of how professional theater cleaning works and how services are scheduled."
 
   about_blurb: str = (
@@ -139,202 +139,188 @@ class SiteConfig:
   )
 
 
-
-
   # Content (minimal placeholders; keep your real text here)
   main_h2: tuple[str, ...] = (
-    "What Does Professional Movie Theater Cleaning Include?",
-    "What Sanitation and Hygiene Issues Does Theater Cleaning Address?",
-    "How Are Theater Seats and Upholstery Properly Cleaned?",
-    "Can Theater Cleaning Be Scheduled Around Showtimes?",
-    "Which Areas of a Theater Need the Most Frequent Cleaning?",
-    "When Should a Theater Schedule Deep Cleaning Services?",
+    "What Is a Peephole and What Types Are Available?",
+    "How Do Door Peepholes Work?",
+    "Can a Peephole Be Added to an Existing Door?",
+    "How High Should a Peephole Be Installed?",
+    "Are Peepholes One-Way or Can Someone See Inside?",
+    "When Should a Peephole Be Installed or Replaced?",
   )
+
 
   main_p: tuple[str, ...] = (
-    "Professional movie theater cleaning typically includes cleaning and sanitizing seats, carpets, floors, restrooms, and concession areas. These services are designed to handle high foot traffic while keeping the theater clean, presentable, and safe for guests.",
-    "Theater cleaning addresses sanitation and hygiene issues caused by shared seating, high-touch surfaces, food spills, and heavy daily foot traffic. Proper cleaning helps reduce bacteria, odors, and buildup that can affect both guest comfort and overall cleanliness.",
-    "Theater seats and upholstery are cleaned using methods that remove spills, oils, and buildup without damaging fabrics or padding. Proper seat cleaning improves appearance, supports hygiene, and helps extend the life of seating materials.",
-    "Yes, theater cleaning can be scheduled around showtimes to avoid interrupting daily operations. Many cinema cleaning services work overnight or between screenings so theaters are ready for the next audience.",
-    "High-touch areas like armrests, seat backs, concession counters, and restrooms usually need the most frequent cleaning. These surfaces collect the most contact throughout the day and play a major role in sanitation and guest comfort.",
-    "Deep cleaning services are usually scheduled when routine cleaning no longer removes odors or buildup effectively. This type of cleaning refreshes seating, carpets, and common areas to restore overall cleanliness."
+    "A peephole, also called a door viewer or peep hole, is a small optical device installed in a door to see who is outside without opening it. Common options include standard glass lenses, wide-angle viewers, and modern peephole cameras designed for added security.",
+    "Door peepholes work by using a small fisheye lens that bends light to create a wide-angle view of the area outside the door. This allows you to see visitors, packages, or activity directly in front of the entryway from inside.",
+    "Yes, a peephole can be added to most existing wood and metal doors, including front doors, apartment doors, and condo units. Peepholes can also be replaced if the existing viewer is scratched, fogged, or outdated.",
+    "Peepholes are typically installed between 4.5 and 5.5 feet from the bottom of the door, depending on who primarily uses the door. In some cases, additional viewers can be installed at different heights for accessibility or shared use.",
+    "Traditional peepholes are one-way viewers, meaning people outside cannot see in through the lens. Some newer models include cameras or digital displays that provide enhanced visibility while maintaining privacy.",
+    "A peephole should be installed when a door lacks visibility or replaced when the lens becomes damaged, loose, or unclear. Upgrading an old peephole can improve both visibility and entryway security."
   )
 
-
-
-  howto_h2: tuple[str, ...] = (
-    "How Woodpecker Damage Is Typically Identified on a House",
-    "How Professionals Determine Whether Damage Is Surface-Level or Structural",
-    "How Different Repair Methods Are Used for Woodpecker Holes",
-    "How Woodpecker Damage Is Sealed to Prevent Moisture Intrusion",
-    "How Finish Matching Affects the Durability and Appearance of Repairs",
-    "When Woodpecker Damage Repair Is Not a DIY-Friendly Project",
-  )
-
-  
 
   # Local cost snippet
-  location_cost_h2: str = "How Much Does Theater Cleaning Cost{loc}?"
+  location_cost_h2: str = "How Much Does Peephole Installation Cost{loc}?"
   location_cost_p: str = (
-      "Theater cleaning costs{loc} typically range between {cost_lo} and {cost_hi}, depending on theater size, seating capacity, and cleaning frequency. "
-      "Pricing can also vary based on carpeted areas, restroom count, and local labor rates."
+      "Peephole installation costs{loc} typically range between {cost_lo} and {cost_hi}, depending on door material, thickness, and placement requirements. "
+      "Pricing can also vary based on whether an existing peephole is being replaced or a new one is installed."
   )
 
   # Meta descriptions (keep them unique per page, ~150-160 chars)
   home_description: str = (
-      "Professional theater cleaning for movie theaters and cinemas. We clean seating, carpets, restrooms, and high-traffic areas. Get a free estimate."
+      "Professional peephole installation for front and entry doors. Improve visibility and door security with clean, properly placed door viewers."
   )
 
   city_description: str = (
-      "Theater cleaning services{loc} for movie theaters and cinemas. Seating, carpets, restrooms, and common areas cleaned. Get a free estimate."
+      "Peephole installation services{loc} for front and entry doors. Proper placement, clean installs, and improved door visibility."
   )
 
   cost_description: str = (
-      "Theater cleaning cost guide: typical price ranges, cleaning scope examples, and what affects overall service pricing."
+      "Peephole installation cost guide: typical price ranges, door types, and factors that affect total installation cost."
   )
 
   cost_city_description: str = (
-      "Theater cleaning cost{loc}: typical local pricing ranges, what affects total cost, and common cleaning scope examples."
+      "Peephole installation cost{loc}: typical local pricing ranges and factors like door material and replacement vs new install."
   )
 
   howto_description: str = (
-      "How theater cleaning is done: an overview of seating, carpet, restroom, and common area cleaning and how services are scheduled."
+      "How peephole installation works: an overview of placement, door compatibility, and what’s involved in professional installation."
   )
 
   contact_description: str = (
-      "Request a free estimate for professional theater cleaning. Share your location and facility details to get pricing and scheduling."
+      "Request a quote for professional peephole installation. Share your location and door type to get pricing and scheduling."
   )
 
   state_description: str = (
-      "Theater cleaning services{loc}. Browse cities we serve, view typical pricing ranges, and request a free estimate."
+      "Peephole installation services{loc}. Browse cities we serve, view typical pricing ranges, and request a quote."
   )
-
 
   cost_body = """
   <section>
-    <h2>Woodpecker Damage Repair Cost Ranges (Most Common Repairs)</h2>
+    <h2>Peephole Installation Cost Ranges (Most Common Scenarios)</h2>
     <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th>Repair Scenario</th>
+            <th>Install Scenario</th>
             <th>Typical Cost Range</th>
             <th>What You’re Paying For</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Small hole repair (up to ~2")</td>
+            <td>Replace existing peephole (same hole size)</td>
+            <td>$75–$150</td>
+            <td>Remove old viewer, install new viewer, tighten + align</td>
+          </tr>
+          <tr>
+            <td>New peephole install (drill a new hole in door)</td>
+            <td>$100–$250</td>
+            <td>Measure height, bore clean hole, install viewer, clean-up</td>
+          </tr>
+          <tr>
+            <td>Install wide-angle / higher-quality viewer</td>
+            <td>$120–$300</td>
+            <td>Better hardware + careful fit for door thickness</td>
+          </tr>
+          <tr>
+            <td>Digital peephole / door viewer (screen model)</td>
+            <td>$150–$300+</td>
+            <td>Larger cutout (sometimes), mounting, setup + testing</td>
+          </tr>
+          <tr>
+            <td>Smart peephole (camera + app/Wi-Fi models)</td>
+            <td>$250–$500+</td>
+            <td>Device install + configuration; sometimes door mods</td>
+          </tr>
+          <tr>
+            <td>Hard door material (metal/security doors)</td>
             <td>$150–$350</td>
-            <td>Clean-out, epoxy patch/plug, seal, spot finish</td>
+            <td>Specialty bits, slower drilling, clean edges</td>
           </tr>
           <tr>
-            <td>Medium hole repair (~2–6")</td>
-            <td>$300–$800</td>
-            <td>Deeper patch/plug, sealing, finish blending</td>
+            <td>Door thickness mismatch / hole resizing required</td>
+            <td>$50–$200</td>
+            <td>Re-bore/step-bit work, correct-length viewer, fit/finish</td>
           </tr>
           <tr>
-            <td>Large hole repair (over ~6")</td>
-            <td>$600–$1,500</td>
-            <td>Section rebuild or partial replacement, sealing, finish</td>
-          </tr>
-          <tr>
-            <td>Replace a damaged siding board / small area</td>
-            <td>$500–$2,500</td>
-            <td>Remove/replace material, water management, finish match</td>
-          </tr>
-          <tr>
-            <td>Structural repair (sheathing/stud/insulation affected)</td>
-            <td>$1,000–$3,500+</td>
-            <td>Open-up, replace damaged wood, restore weather barrier</td>
-          </tr>
-          <tr>
-            <td>Interior wall repair (if penetrated)</td>
-            <td>$250–$900</td>
-            <td>Drywall patch, texture match, paint</td>
-          </tr>
-          <tr>
-            <td>Paint/stain blending (separate line item)</td>
-            <td>$150–$600</td>
-            <td>Prime + blend to hide repair</td>
-          </tr>
-          <tr>
-            <td>High access work (2nd story / steep roofline)</td>
-            <td>+15% to +50%</td>
-            <td>Setup time, safety, ladders or lift</td>
+            <td>Second peephole at a different height (accessibility)</td>
+            <td>$75–$200</td>
+            <td>Additional drilling + full second install</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <p>
-      <strong>Typical total:</strong> $300–$2,500.
-      <strong>When hidden damage is present:</strong> $5,000+ is possible.
+      <strong>Typical total:</strong> $100–$250 for a standard new install.
+      <strong>Upgrades (digital/smart or hard doors):</strong> $250–$500+ is common.
     </p>
 
     <hr />
 
-    <h2>Cost by Severity (Fast Self-Assessment)</h2>
+    <h2>Cost by Complexity (Fast Self-Assessment)</h2>
 
     <h3>Minor</h3>
     <ul>
-      <li><strong>What it looks like:</strong> 1–2 small holes, shallow pecks, solid wood</li>
-      <li><strong>Expected cost:</strong> $150–$500</li>
-      <li><strong>Common repair:</strong> epoxy patch/plug + seal + spot finish</li>
+      <li><strong>What it looks like:</strong> replacing an existing viewer, hole already fits</li>
+      <li><strong>Expected cost:</strong> $75–$150</li>
+      <li><strong>Common work:</strong> remove/replace + alignment</li>
     </ul>
 
     <h3>Moderate</h3>
     <ul>
-      <li><strong>What it looks like:</strong> multiple holes in one zone, repeated pecking on the same board</li>
-      <li><strong>Expected cost:</strong> $500–$2,500</li>
-      <li><strong>Common repair:</strong> multi-hole patching or board/panel replacement + finish blending</li>
+      <li><strong>What it looks like:</strong> new hole in a typical wood/fiberglass door</li>
+      <li><strong>Expected cost:</strong> $100–$250</li>
+      <li><strong>Common work:</strong> measure height + drill + install</li>
     </ul>
 
     <h3>Severe</h3>
     <ul>
-      <li><strong>What it looks like:</strong> cavity access, soft/rotted wood, water staining, nesting attempts</li>
-      <li><strong>Expected cost:</strong> $2,500–$5,000+</li>
-      <li><strong>Common repair:</strong> open-up + structural repair + insulation/water barrier restoration</li>
+      <li><strong>What it looks like:</strong> metal/security door, resizing, or smart/digital unit</li>
+      <li><strong>Expected cost:</strong> $250–$500+</li>
+      <li><strong>Common work:</strong> door modification + device mounting + setup</li>
     </ul>
 
     <hr />
 
-    <h2>Repair Cost by Siding Material</h2>
-    
+    <h2>Repair/Install Cost by Door Type</h2>
+
     <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th>Siding Material</th>
-            <th>Typical Repair Range</th>
+            <th>Door Type</th>
+            <th>Typical Install Range</th>
             <th>Why It Costs More (or Less)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Wood lap siding</td>
-            <td>$300–$3,000</td>
-            <td>Finish matching + moisture protection are labor-heavy</td>
+            <td>Hollow-core interior-style door</td>
+            <td>$75–$200</td>
+            <td>Easy drilling, but careful placement to avoid blowout</td>
           </tr>
           <tr>
-            <td>Cedar shake</td>
-            <td>$500–$4,000</td>
-            <td>Individual shake replacement + blend pattern/aging</td>
+            <td>Solid wood exterior door</td>
+            <td>$100–$250</td>
+            <td>Clean bore needed; longer viewers for thicker doors</td>
           </tr>
           <tr>
-            <td>Vinyl siding</td>
-            <td>$250–$2,000</td>
-            <td>Often panel replacement; color matching varies by age</td>
+            <td>Fiberglass door</td>
+            <td>$100–$300</td>
+            <td>Slower drilling + clean edges so hardware seats correctly</td>
           </tr>
           <tr>
-            <td>Fiber cement</td>
-            <td>$500–$3,500</td>
-            <td>Cutting/fastening + repainting required</td>
+            <td>Steel/metal door</td>
+            <td>$150–$350</td>
+            <td>Special bits + slower work; higher risk of rough edges</td>
           </tr>
           <tr>
-            <td>Stucco</td>
-            <td>$800–$4,500</td>
-            <td>Multi-step patch + texture matching</td>
+            <td>Security door / reinforced door</td>
+            <td>$200–$500+</td>
+            <td>Thicker materials, reinforcement layers, sometimes nonstandard hardware</td>
           </tr>
         </tbody>
       </table>
@@ -342,81 +328,78 @@ class SiteConfig:
 
     <hr />
 
-    <h2>What Increases Woodpecker Repair Costs</h2>
-
+    <h2>What Increases Peephole Installation Cost</h2>
     <ul>
-      <li><strong>Hidden moisture:</strong> swelling, rot, or stained sheathing behind siding</li>
-      <li><strong>Hole depth:</strong> penetration into cavity or insulation triggers bigger scope</li>
-      <li><strong>Repeat targeting:</strong> multiple boards or corners need repair + protection</li>
-      <li><strong>Access:</strong> second story, roofline, chimney, steep grade</li>
-      <li><strong>Finish matching:</strong> older paint/stain requires blending, not just patching</li>
+      <li><strong>New hole vs replacement:</strong> drilling is more labor than swapping a viewer</li>
+      <li><strong>Door material:</strong> steel/security doors take longer and need specialty bits</li>
+      <li><strong>Door thickness:</strong> wrong-length viewer or resizing adds time</li>
+      <li><strong>Digital/smart models:</strong> mounting footprint + setup/testing</li>
+      <li><strong>Multiple viewers:</strong> second height for kids/accessibility increases labor</li>
+      <li><strong>Damage control:</strong> patching/touch-up if an old hole is ragged or oversized</li>
+      <li><strong>Service call/trip fee:</strong> many locksmiths price a minimum visit charge</li>
     </ul>
 
     <hr />
 
-    <h2>When Patching Is Enough vs When Replacement Is Required</h2>
+    <h2>When a Simple Install Is Enough vs When Door Modification Is Required</h2>
 
-    <h3>Patching is usually enough if:</h3>
+    <h3>Simple install is usually enough if:</h3>
     <ul>
-      <li>The wood is hard when probed</li>
-      <li>Holes are shallow and limited to the surface</li>
-      <li>No water staining, softness, or swelling is present</li>
+      <li>The door already has a peephole and the new viewer matches the hole size</li>
+      <li>The door thickness matches the viewer’s supported range</li>
+      <li>You’re installing a standard optical viewer (not a bulky digital unit)</li>
     </ul>
 
-    <h3>Replacement is usually required if:</h3>
+    <h3>Door modification is usually required if:</h3>
     <ul>
-      <li>The wood feels soft or spongy</li>
-      <li>Holes are large, deep, or connected internally</li>
-      <li>There is rot, cracking, swelling, or delamination</li>
-      <li>The same board has been hit repeatedly</li>
+      <li>No existing hole (new drilling needed)</li>
+      <li>The existing hole is the wrong diameter or is damaged/oversized</li>
+      <li>The door is metal/security grade (slower drilling + edge cleanup)</li>
+      <li>You’re installing a digital/smart viewer that needs a larger cutout or mounting plate</li>
     </ul>
 
     <p>
-      <strong>Rule:</strong> If a screwdriver sinks in easily, replacement is more reliable than patching.
+      <strong>Rule:</strong> If the new viewer won’t sit flush on both sides, you’re in “modify/resize” territory (not a simple swap).
     </p>
 
     <hr />
 
-    <h2>Prevention Costs (Avoid Paying Twice)</h2>
-
-    <p>
-      Repairs alone often get hit again. Physical exclusion is what consistently stops repeat damage.
-    </p>
+    <h2>Common Upgrades (Often Bundled With Installation)</h2>
 
     <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th>Prevention Method</th>
-            <th>Typical Cost</th>
+            <th>Upgrade</th>
+            <th>Typical Added Cost</th>
             <th>Best Use</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Bird netting over the target area</td>
-            <td>$150–$800</td>
-            <td>Repeat pecking zones on siding walls</td>
+            <td>Wide-angle viewer upgrade</td>
+            <td>$20–$100</td>
+            <td>Better field of view without going digital</td>
           </tr>
           <tr>
-            <td>Hardware cloth / barrier panels</td>
-            <td>$150–$900</td>
-            <td>Corners, fascia, trim boards that get repeatedly hit</td>
+            <td>Privacy shutter / cover</td>
+            <td>$10–$60</td>
+            <td>Blocks light/visibility from inside; simple privacy upgrade</td>
           </tr>
           <tr>
-            <td>Metal flashing / corner protection</td>
-            <td>$200–$1,000</td>
-            <td>High-impact edges and roofline zones</td>
+            <td>Digital viewer (screen model)</td>
+            <td>$75–$250</td>
+            <td>No bending down; clearer view for many users</td>
           </tr>
           <tr>
-            <td>Professional wildlife exclusion / control</td>
-            <td>$300–$1,500</td>
-            <td>Persistent activity or nesting attempts</td>
+            <td>Smart peephole (camera + app)</td>
+            <td>$150–$400</td>
+            <td>Recording/alerts (note: some models have subscriptions)</td>
           </tr>
           <tr>
-            <td>Visual deterrents (tape/decoys)</td>
-            <td>$20–$150</td>
-            <td>Short-term support only (not a primary fix)</td>
+            <td>Second viewer at a lower height</td>
+            <td>$75–$200</td>
+            <td>Kids/accessibility needs in multi-person homes</td>
           </tr>
         </tbody>
       </table>
@@ -424,28 +407,26 @@ class SiteConfig:
 
     <hr />
 
-    <h2>What a Siding Repair Quote Should Include</h2>
-
+    <h2>What a Peephole Installation Quote Should Include</h2>
     <ul>
-      <li>Hole count and largest hole diameter</li>
-      <li>Patch vs board/panel replacement scope</li>
-      <li>Waterproofing plan (sealant, flashing, weather barrier restoration)</li>
-      <li>Finish plan (prime + paint blend or stain match)</li>
-      <li>Access plan (ladder vs lift and how it impacts price)</li>
-      <li>Prevention plan (netting/barriers) to reduce repeat damage</li>
+      <li>Replacement vs new hole (and which side(s) get hardware)</li>
+      <li>Door material and thickness (viewer length compatibility)</li>
+      <li>Viewer type (standard / wide-angle / digital / smart)</li>
+      <li>Whether resizing is required (hole diameter mismatch or damage)</li>
+      <li>Any service-call/minimum fee and what it covers</li>
+      <li>For smart models: setup/testing scope (app pairing, Wi-Fi check)</li>
     </ul>
 
     <hr />
 
-    <h2>Woodpecker Damage Insurance Coverage (Common Reality)</h2>
-
+    <h2>Permissions / Coverage (Common Reality)</h2>
     <p>
-      Home insurance may cover woodpecker damage depending on the policy and exclusions. Coverage is more likely when
-      damage is sudden and not tied to neglect. Document the damage immediately and ask whether animal-related exterior
-      damage is covered.
+      Peephole installation is usually considered a minor security upgrade, not an insurance claim.
+      If you rent or have an HOA, confirm you’re allowed to drill the door before modifying it.
     </p>
   </section>
   """
+
   howto_body = """
   <section>
     <h2>Step 1: Inspect the Damage (Repair vs Replace)</h2>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://peepholeinstallationspecialists.com/sitemap.xml
